@@ -1,0 +1,75 @@
+﻿@{
+    ViewBag.Title = "ViewMap";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>ViewMap</h2>
+<div id="map-canvas" class="map"></div>
+<input type="button" id="Button1" onclick="window.location.href='@Url.Action("Search","home")'"
+        value="Search" />
+<input type="button" id="Button2" onclick="window.location.href='@Url.Action("Upload","home")'"
+        value="Upload" />
+
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+<script>
+
+
+        var campusPlaces = [
+                        ["place1", 40.8204419, -96.7005872, 1],
+                        ["place2", 40.8190510, -96.7006872, 2]];
+
+        function initialize() {
+            var mapOptions = {
+                zoom: 17,
+                center: new google.maps.LatLng(40.8204419, -96.7005872),
+                mapTypeId: google.maps.MapTypeId.SATELLITE
+            }
+            var map = new google.maps.Map(document.getElementById('map-canvas'),
+                                mapOptions);
+
+            addMarkers(map, campusPlaces);
+
+
+        }
+
+        function addMarkers(map, points) {
+
+            for (var i = 0; i < points.length; i++) {
+
+                var campusSpot = points[i];
+
+                var location = new google.maps.LatLng(campusSpot[1], campusSpot[2]);
+
+                var name = campusSpot[0];
+                var image = "../../Content/Images/nMarker.jpg";
+                //window.alert(location);
+                var contentString = '<div id="content" class="window">' +
+                'Info Window Test:' + name +
+                '</div>';
+
+                var infowindow = new google.maps.InfoWindow({ content: contentString });
+
+                var campusMarker = new google.maps.Marker({
+                    position: location,
+                    map: map,
+                    icon: image,
+                    title: name
+                });
+
+                google.maps.event.addListener(campusMarker, 'click',
+                function (infowindow, campusMarker) {
+                    return function () {
+                        infowindow.open(map, campusMarker);
+                    };
+                } (infowindow, campusMarker)
+    );
+
+            }
+
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+</script>
+

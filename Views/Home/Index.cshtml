@@ -1,0 +1,16 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutLog.cshtml";
+    ViewBag.Title = "Home Page";
+}
+@section featured {
+
+    <h2>Please Log in:</h2>
+    Username: @Html.TextBox("Quantity", "", new { placeholder = "Username" })
+<br />
+    Password: @Html.Password("pass", "")
+<br />
+    <input type="button" id="loginButton" onclick="window.location.href='@Url.Action("ViewMap","home")'" value="Login" />
+    
+
+    
+    }
