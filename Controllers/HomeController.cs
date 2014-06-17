@@ -49,12 +49,12 @@ namespace csce361project1145.Controllers
 
         }
 
-        public JsonResult getLocations()
+        public ActionResult getLocations()
         {
+
             var context = new dsimpsonEntities4();
-            var locations = from x in context.locations select x;
-            locations.ToArray();
-            return Json(locations);
+            var locations = context.locations.ToList();
+            return Json(locations, JsonRequestBehavior.AllowGet);
         }
     }
 }

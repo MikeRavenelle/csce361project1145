@@ -20,7 +20,7 @@
             url: 'getdata',
             dataType: 'json',
             success: function(response) {
-                c = response;
+                campusPlaces = response;
             }
         })
         function initialize() {
@@ -43,7 +43,7 @@
 
                 var campusSpot = points[i];
 
-                var location = new google.maps.LatLng(campusSpot[1], campusSpot[2]);
+                var location = new google.maps.LatLng(campusSpot['longitude'], campusSpot['latitude']);
 
                 var name = campusSpot[0];
                 var image = "../../Content/Images/nMarker.jpg";
