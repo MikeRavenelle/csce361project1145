@@ -14,11 +14,15 @@
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 <script>
 
+        var campusPlaces;
 
-        var campusPlaces = [
-                        ["place1", 40.8204419, -96.7005872, 1],
-                        ["place2", 40.8190510, -96.7006872, 2]];
-
+        $.ajax({
+            url: 'getdata',
+            dataType: 'json',
+            success: function(response) {
+                c = response;
+            }
+        })
         function initialize() {
             var mapOptions = {
                 zoom: 17,

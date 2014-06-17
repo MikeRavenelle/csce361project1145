@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="5b1c8e50caa048cfb2257ac50fd3ded3" Name="Diagram1">
+        <EntityTypeShape EntityType="csce361project1145Model.comment" Width="1.5" PointX="3" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="csce361project1145Model.location" Width="1.5" PointX="3.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="csce361project1145Model.picture" Width="1.5" PointX="6" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="csce361project1145Model.user" Width="1.5" PointX="0.75" PointY="3.5" IsExpanded="true" />
+        <AssociationConnector Association="csce361project1145Model.comments_ibfk_1" ManuallyRouted="false" />
+        <AssociationConnector Association="csce361project1145Model.comments_ibfk_2" ManuallyRouted="false" />
+        <AssociationConnector Association="csce361project1145Model.pictures_ibfk_2" ManuallyRouted="false" />
+        <AssociationConnector Association="csce361project1145Model.pictures_ibfk_1" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

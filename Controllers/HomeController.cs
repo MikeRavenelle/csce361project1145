@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using csce361project1145.Models;
+using System.Data.Entity;
 
 namespace csce361project1145.Controllers
 {
@@ -34,9 +36,25 @@ namespace csce361project1145.Controllers
 
         public ActionResult UploadPhoto()
         {
+            var test = new location();
+            var context = new dsimpsonEntities4();
+            test.latitude = 5;
+            test.longitude = 6;
+            context.locations.Add(test);
+            context.SaveChanges();
+
+            
             //Do stuff for uploading, no idea what yet.
             return View("ViewMap");
 
+        }
+
+        public JsonResult getLocations()
+        {
+            var context = new dsimpsonEntities4();
+            var locations = from x in context.locations select x;
+            locations.ToArray();
+            return Json(locations);
         }
     }
 }
