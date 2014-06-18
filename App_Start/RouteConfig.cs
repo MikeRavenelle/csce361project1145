@@ -15,7 +15,7 @@ namespace csce361project1145
 
             routes.MapRoute(
                 name: "getdata",
-                url: "{controller}/getdata",
+                url: "getdata",
                 defaults: new { controller = "Home", action = "getLocations" }
             );
 

@@ -14,15 +14,20 @@
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 <script>
 
-        var campusPlaces;
-
+    $(document).ready(function () {
         $.ajax({
-            url: 'getdata',
+            url: '@Url.RouteUrl("getdata")',
             dataType: 'json',
-            success: function(response) {
+            async: false ,
+            success: function (response) {
                 campusPlaces = response;
             }
-        })
+        });
+    });
+
+        var campusPlaces;
+        
+
         function initialize() {
             var mapOptions = {
                 zoom: 17,
