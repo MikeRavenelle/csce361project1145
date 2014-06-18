@@ -54,7 +54,9 @@ namespace csce361project1145.Controllers
 
             var context = new dsimpsonEntities4();
             var locations = context.locations.ToList();
-            return Json(locations, JsonRequestBehavior.AllowGet);
+            return Json(locations.Select(x => new {
+        longitude = x.longitude,
+        latitude = x.latitude }), JsonRequestBehavior.AllowGet);
         }
     }
 }
