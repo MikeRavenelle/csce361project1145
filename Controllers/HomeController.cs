@@ -43,7 +43,7 @@ namespace csce361project1145.Controllers
             context.locations.Add(test);
             context.SaveChanges();
 
-            
+
             //Do stuff for uploading, no idea what yet.
             return View("ViewMap");
 
@@ -54,9 +54,12 @@ namespace csce361project1145.Controllers
 
             var context = new dsimpsonEntities4();
             var locations = context.locations.ToList();
-            return Json(locations.Select(x => new {
-        longitude = x.longitude,
-        latitude = x.latitude }), JsonRequestBehavior.AllowGet);
+            return Json(locations.Select(x => new
+            {
+                longitude = x.longitude,
+                latitude = x.latitude
+            }),
+                  JsonRequestBehavior.AllowGet);
         }
     }
 }
