@@ -54,8 +54,11 @@ namespace csce361project1145.Controllers
 
             var context = new dsimpsonEntities4();
             var locations = context.locations.ToList();
+            //Where example:
+           // var locations = context.locations.Where(x => x.locationId == 2).ToList();
             return Json(locations.Select(x => new
             {
+                id = x.locationId,
                 longitude = x.longitude,
                 latitude = x.latitude
             }),
