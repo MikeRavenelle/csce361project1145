@@ -1,0 +1,128 @@
+﻿@{
+    ViewBag.Title = "ViewMap";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>ViewMap</h2>
+<div id="map-canvas" class="map"></div>
+<input type="button" id="Button1" onclick="window.location.href='@Url.Action("Search","home")'"
+        value="Search" />
+<input type="button" id="Button2" onclick="window.location.href='@Url.Action("Upload","home")'"
+        value="Upload" />
+
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+<script>
+
+    $(document).ready(function () {
+        $.ajax({
+            url: '@Url.RouteUrl("getdata")',
+            dataType: 'json',
+            async: false ,
+            success: function (response) {
+                campusPlaces = response;
+            }
+        });
+    });
+
+        var campusPlaces;
+        
+
+        function initialize() {
+            var mapOptions = {
+                zoom: 17,
+                center: new google.maps.LatLng(40.8204419, -96.7005872),
+                mapTypeId: google.maps.MapTypeId.SATELLITE
+            }
+            var map = new google.maps.Map(document.getElementById('map-canvas'),
+                                mapOptions);
+
+            addMarkers(map, campusPlaces);
+
+
+        }
+
+        function addMarkers(map, points) {
+
+            for (var i = 0; i < points.length; i++) {
+
+                var campusSpot = points[i];
+
+                var location = new google.maps.LatLng(campusSpot['longitude'], campusSpot['latitude']);
+                var locationId = campusSpot['id'].toString();
+                var name = campusSpot[0];
+                var image = "../../Content/Images/nMarker.png";
+                //window.alert(location);
+
+
+                var infowindow = new google.maps.InfoWindow({});
+
+                var campusMarker = new google.maps.Marker({
+                    position: location,
+                    map: map,
+                    icon: image
+                    });
+                campusMarker.setTitle(locationId);
+
+
+                
+                google.maps.event.addListener(campusMarker, 'click',
+
+               
+                function (infowindow, campusMarker) {
+                    var ajaxData = { locationId: locationId };
+                    $.ajax({
+                        url: '@Url.RouteUrl("getPics")',
+                        data: ajaxData,
+                        dataType: 'json',
+                        type: "POST",
+                        async: false,
+                        success: function (response) {
+                            campusPictures = response;
+                        }
+                    });
+
+                    var contentString;
+                    
+                    for(var j = 0; j<campusPictures.length; ++j)
+                    {
+                        campusPic = campusPictures[j];
+
+                        contentString += '<img height="200px" width="400px"src="' + campusPic['url'] + '" alt="Smiley face">'
+                               + '<div class="caption">' + campusPic['caption'] + '</div>';
+                       
+                       var pictureId = campusPic['id'];
+                       var ajaxPictureData = { pictureId: pictureId };
+                        $.ajax({
+                            url: '@Url.RouteUrl("getcomments")',
+                            data: ajaxPictureData,
+                            dataType: 'json',
+                            type: "POST",
+                            async: false,
+                            success: function (response) {
+                                comments = response;
+                            }
+                        });
+
+                        for (var c = 0; c < comments.length; ++c) {
+                            comment = comments[c];
+
+                            contentString += '<div class="comment">' + comment['commentText'] + '</div>';
+                        }
+
+                    }
+                    infowindow.setContent(contentString);
+                    return function () {
+                        infowindow.open(map, campusMarker);
+                    };
+                } (infowindow, campusMarker)
+    );
+
+            }
+
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+</script>
+

@@ -297,6 +297,7 @@
       <DependentUpon>csce361Models.edmx</DependentUpon>
       <LastGenOutput>csce361Models.cs</LastGenOutput>
     </Content>
+    <None Include="Properties\PublishProfiles\smeaglesmeagle.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />

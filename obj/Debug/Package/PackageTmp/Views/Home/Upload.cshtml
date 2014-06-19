@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "Upload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Upload</h2>
+@using Microsoft.Web.Helpers
+@{
+    var fileName = "";
+    if (IsPost)
+    {
+        var fileLocation = "";
+        var uploadedFile = Request.Files[0];
+        fileName = Path.GetFileName(uploadedFile.FileName); //set this to the user name with a number that represents what number picture this is that he owns
+        fileLocation = Server.MapPath("~/App_Data/Upload/" +
+          fileName);
+        uploadedFile.SaveAs(fileLocation);
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload your picture!</title>
+</head>
+<body>
+    <h1>Please select your picture:</h1>
+    @FileUpload.GetHtml(
+        initialNumberOfFiles: 1,
+        allowMoreFilesToBeAdded: false,
+        includeFormTag: true,
+        uploadText: "Upload")
+    @if (IsPost)
+    {
+        <script>
+           window.location.href='@Url.Action("ViewMap", "home")';
+        </script>
+    }
+</body>
+</html>
