@@ -12,7 +12,7 @@
         var fileLocation = "";
         var uploadedFile = Request.Files[0];
         fileName = Path.GetFileName(uploadedFile.FileName); //set this to the user name with a number that represents what number picture this is that he owns
-        fileLocation = Server.MapPath("~/App_Data/Upload/" +
+        fileLocation = Server.MapPath("~/Content/Upload/" +
           fileName);
         uploadedFile.SaveAs(fileLocation);
     }
