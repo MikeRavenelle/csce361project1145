@@ -77,8 +77,25 @@ namespace csce361project1145.Controllers
             // var locations = context.locations.Where(x => x.locationId == 2).ToList();
             return Json(pictures.Select(x => new
             {
+                id = x.pictureId,
                 url = x.url,
                 caption = x.caption
+            }),
+                  JsonRequestBehavior.AllowGet);
+        }
+
+        [System.Web.Services.WebMethod]
+        public ActionResult getComments(String pictureId)
+        {
+            var pictureInt = Convert.ToInt32(pictureId);
+            var context = new dsimpsonEntities4();
+            var comments = context.comments.Where(x => x.pictureId == pictureInt).ToList();
+            //Where example:
+            // var locations = context.locations.Where(x => x.locationId == 2).ToList();
+            return Json(comments.Select(x => new
+            {
+                commentText = x.commentText
+                
             }),
                   JsonRequestBehavior.AllowGet);
         }

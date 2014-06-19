@@ -90,6 +90,26 @@
 
                         contentString += '<img height="200px" width="400px"src="' + campusPic['url'] + '" alt="Smiley face">'
                                + '<div class="caption">' + campusPic['caption'] + '</div>';
+                       
+                       var pictureId = campusPic['id'];
+                       var ajaxPictureData = { pictureId: pictureId };
+                        $.ajax({
+                            url: '@Url.RouteUrl("getcomments")',
+                            data: ajaxPictureData,
+                            dataType: 'json',
+                            type: "POST",
+                            async: false,
+                            success: function (response) {
+                                comments = response;
+                            }
+                        });
+
+                        for (var c = 0; c < comments.length; ++c) {
+                            comment = comments[c];
+
+                            contentString += '<div class="comment">' + comment['commentText'] + '</div>';
+                        }
+
                     }
                     infowindow.setContent(contentString);
                     return function () {
