@@ -13,7 +13,7 @@
 
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 <script>
-
+    // Call to HomeController.getLocations via getdata Route to get locations
     $(document).ready(function () {
         $.ajax({
             url: '@Url.RouteUrl("getdata")',
@@ -24,10 +24,7 @@
             }
         });
     });
-
-        var campusPlaces;
-        
-
+        //Create the map via google maps api zoomed into UNL City Campus
         function initialize() {
             var mapOptions = {
                 zoom: 17,
@@ -42,18 +39,16 @@
 
         }
 
+        //Add all of the Markers
         function addMarkers(map, points) {
 
             for (var i = 0; i < points.length; i++) {
 
                 var campusSpot = points[i];
-
                 var location = new google.maps.LatLng(campusSpot['longitude'], campusSpot['latitude']);
                 var locationId = campusSpot['id'].toString();
                 var name = campusSpot[0];
                 var image = "../../Content/Images/nMarker.png";
-                //window.alert(location);
-
 
                 var infowindow = new google.maps.InfoWindow({});
 
@@ -63,12 +58,11 @@
                     icon: image
                     });
                 campusMarker.setTitle(locationId);
-
-
                 
                 google.maps.event.addListener(campusMarker, 'click',
 
-               
+               //Get all of the pictures at the current location 
+               //      Call to HomeController.getPictures via getPics route
                 function (infowindow, campusMarker) {
                     var ajaxData = { locationId: locationId };
                     $.ajax({
@@ -82,15 +76,19 @@
                         }
                     });
 
+                    // String of HTML that is concatenated as pictureURL, caption, user, comment, 
+                    //   are retrieved to be used in infoWindow
                     var contentString;
                     
                     for(var j = 0; j<campusPictures.length; ++j)
                     {
                         campusPic = campusPictures[j];
-
+                        
                         contentString += '<img height="200px" width="400px"src="' + campusPic['url'] + '" alt="Smiley face">'
                                + '<div class="caption">' + campusPic['caption'] + '</div>';
                        
+                        //Get all comments for the current picture from HomeController.getComments via
+                        //   getcomments route
                        var pictureId = campusPic['id'];
                        var ajaxPictureData = { pictureId: pictureId };
                         $.ajax({
@@ -103,13 +101,32 @@
                                 comments = response;
                             }
                         });
-
+                        contentString += '<table>';
                         for (var c = 0; c < comments.length; ++c) {
                             comment = comments[c];
 
-                            contentString += '<div class="comment">' + comment['commentText'] + '</div>';
+                            //Get the user that added the current comment from HomeController.getUser
+                            //  via getuser route
+                            var userId = comment['userId'];
+                            var ajaxUserData = { userId: userId };
+                            $.ajax({
+                                url: '@Url.RouteUrl("getuser")',
+                                data: ajaxUserData,
+                                dataType: 'json',
+                                type: "POST",
+                                async: false,
+                                success: function (response) {
+                                    users = response;
+                                }
+                            });
+                           
+                            user = users[0];
+                            contentString += '<tr><td>' + user['firstName'] + " " + user['lastName'] + '</td>' +
+                                             '<td>' + '<div class="comment">' + comment['commentText'] + '</div> </td></tr>';
+                            
+                                           
                         }
-
+                        contentString += '</table>'
                     }
                     infowindow.setContent(contentString);
                     return function () {
