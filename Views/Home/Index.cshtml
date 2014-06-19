@@ -7,7 +7,7 @@
     <h2>Please Log in:</h2>
     Username: @Html.TextBox("Quantity", "", new { placeholder = "Username" })
 <br />
-    Password: @Html.Password("pass", "")
+    Password: @Html.Password("pass", "", new { placeholder = "Password" })
 <br />
     <input type="button" id="loginButton" onclick="window.location.href='@Url.Action("ViewMap","home")'" value="Login" />
     
