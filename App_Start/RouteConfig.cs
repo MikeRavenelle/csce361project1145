@@ -20,6 +20,12 @@ namespace csce361project1145
             );
 
             routes.MapRoute(
+                name: "getpics",
+                url: "getpics",
+                defaults: new { controller = "Home", action = "getPictures" }
+            );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }

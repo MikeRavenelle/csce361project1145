@@ -49,25 +49,49 @@
                 var campusSpot = points[i];
 
                 var location = new google.maps.LatLng(campusSpot['longitude'], campusSpot['latitude']);
-
+                var locationId = campusSpot['id'].toString();
                 var name = campusSpot[0];
                 var image = "../../Content/Images/nMarker.png";
                 //window.alert(location);
-                var contentString = '<div id="content" class="window">' +
-                'Info Window Test:' + name +
-                '</div>';
 
-                var infowindow = new google.maps.InfoWindow({ content: contentString });
+
+                var infowindow = new google.maps.InfoWindow({});
 
                 var campusMarker = new google.maps.Marker({
                     position: location,
                     map: map,
-                    icon: image,
-                    title: name
-                });
+                    icon: image
+                    });
+                campusMarker.setTitle(locationId);
 
+
+                
                 google.maps.event.addListener(campusMarker, 'click',
+
+               
                 function (infowindow, campusMarker) {
+                    var ajaxData = { locationId: locationId };
+                    $.ajax({
+                        url: '@Url.RouteUrl("getPics")',
+                        data: ajaxData,
+                        dataType: 'json',
+                        type: "POST",
+                        async: false,
+                        success: function (response) {
+                            campusPictures = response;
+                        }
+                    });
+
+                    var contentString;
+                    
+                    for(var j = 0; j<campusPictures.length; ++j)
+                    {
+                        campusPic = campusPictures[j];
+
+                        contentString += '<img height="200px" width="400px"src="' + campusPic['url'] + '" alt="Smiley face">'
+                               + '<div class="caption">' + campusPic['caption'] + '</div>';
+                    }
+                    infowindow.setContent(contentString);
                     return function () {
                         infowindow.open(map, campusMarker);
                     };

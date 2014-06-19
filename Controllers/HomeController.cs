@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using csce361project1145.Models;
 using System.Data.Entity;
 
+
 namespace csce361project1145.Controllers
 {
     public class HomeController : Controller
@@ -61,6 +62,23 @@ namespace csce361project1145.Controllers
                 id = x.locationId,
                 longitude = x.longitude,
                 latitude = x.latitude
+            }),
+                  JsonRequestBehavior.AllowGet);
+        }
+
+        [System.Web.Services.WebMethod]
+        public ActionResult getPictures(String locationId)
+        {
+            var locationInt = Convert.ToInt32(locationId);
+            System.Diagnostics.Debug.WriteLine(locationId);
+            var context = new dsimpsonEntities4();
+            var pictures = context.pictures.Where(x => x.locationId == locationInt).ToList();
+            //Where example:
+            // var locations = context.locations.Where(x => x.locationId == 2).ToList();
+            return Json(pictures.Select(x => new
+            {
+                url = x.url,
+                caption = x.caption
             }),
                   JsonRequestBehavior.AllowGet);
         }
