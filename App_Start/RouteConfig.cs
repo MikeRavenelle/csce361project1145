@@ -32,6 +32,12 @@ namespace csce361project1145
             );
 
             routes.MapRoute(
+                name: "extractLocation",
+                url: "extractLocation/{id}",
+                defaults: new { controller = "Home", action = "extractLocation" }
+            );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }

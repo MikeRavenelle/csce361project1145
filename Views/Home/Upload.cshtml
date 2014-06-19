@@ -5,16 +5,28 @@
 
 <h2>Upload</h2>
 @using Microsoft.Web.Helpers
+@using System.Drawing
+@using csce361project1145.Models;
+
 @{
     var fileName = "";
+    var fileLocation = "";
+    var pictureId = 0;
+
     if (IsPost)
     {
-        var fileLocation = "";
         var uploadedFile = Request.Files[0];
         fileName = Path.GetFileName(uploadedFile.FileName); //set this to the user name with a number that represents what number picture this is that he owns
         fileLocation = Server.MapPath("~/Content/Upload/" +
           fileName);
         uploadedFile.SaveAs(fileLocation);
+        var picture = new picture();
+        var context = new dsimpsonEntities4();
+        picture.url = fileLocation + fileName;
+        context.pictures.Add(picture);
+        context.SaveChanges();
+        pictureId = picture.pictureId;
+        
     }
 }
 <!DOCTYPE html>
@@ -31,9 +43,9 @@
         uploadText: "Upload")
     @if (IsPost)
     {
-        <script>
-           window.location.href='@Url.Action("ViewMap", "home")';
-        </script>
+    <script>
+        window.location.assign(@Url.Action("extractLocation", "home", new { id = pictureId}));
+    </script>    
     }
 </body>
 </html>
