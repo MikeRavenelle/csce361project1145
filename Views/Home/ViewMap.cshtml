@@ -13,6 +13,45 @@
 
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 <script>
+
+    //Add a comment from view page
+    function addComment(userId, pictureId) {
+
+        var commentText = document.getElementById(pictureId).value;
+
+        var ajaxData = { userId: userId, pictureId: pictureId, commentText: commentText };
+        $.ajax({
+            url: '@Url.RouteUrl("addComment")',
+            data: ajaxData,
+            dataType: 'json',
+            type: "POST",
+            async: false,
+            success: function () {
+                
+            }
+        });
+        window.location.reload()
+    }
+
+    //Delete a comment from view page
+    function deleteComment(commentId) {
+
+        var ajaxData = { commentId: commentId };
+        $.ajax({
+            url: '@Url.RouteUrl("removeComment")',
+            data: ajaxData,
+            dataType: 'json',
+            type: "POST",
+            async: false,
+            success: function () {
+
+            }
+        });
+
+        window.location.reload()
+    }
+
+
     // Call to HomeController.getLocations via getdata Route to get locations
     $(document).ready(function () {
         $.ajax({
@@ -24,6 +63,7 @@
             }
         });
     });
+   
         //Create the map via google maps api zoomed into UNL City Campus
         function initialize() {
             var mapOptions = {
@@ -78,7 +118,7 @@
 
                     // String of HTML that is concatenated as pictureURL, caption, user, comment, 
                     //   are retrieved to be used in infoWindow
-                    var contentString;
+                    var contentString = "";
                     
                     for(var j = 0; j<campusPictures.length; ++j)
                     {
@@ -101,7 +141,7 @@
                                 comments = response;
                             }
                         });
-                        contentString += '<table>';
+                        contentString += '<table class="infoWindow_table">';
                         for (var c = 0; c < comments.length; ++c) {
                             comment = comments[c];
 
@@ -121,12 +161,19 @@
                             });
                            
                             user = users[0];
-                            contentString += '<tr><td>' + user['firstName'] + " " + user['lastName'] + '</td>' +
-                                             '<td>' + '<div class="comment">' + comment['commentText'] + '</div> </td></tr>';
+                            contentString += '<tr><td class="infoWindow_user">' + user['firstName'] + " " + user['lastName'] + ": " + '</td>' +
+                                             '<td class="infoWindow_comment">' + '<div>' + comment['commentText'] + '</div> </td>';
+                            if (comment['userId'] == 3)
+                            {
+                               contentString += '<td><button type="button" onclick="deleteComment(' + comment['commentId'] + ')">Remove</button></td></tr>';
+                            }
                             
+                            contentString += '</tr>'
                                            
                         }
-                        contentString += '</table>'
+                        
+                        contentString += '</table><input type="text" id="' + pictureId +  '"><button type="button" onclick="addComment(' + 3 + ', ' + pictureId + ')">Post Comment!</button>';
+                        var test;
                     }
                     infowindow.setContent(contentString);
                     return function () {

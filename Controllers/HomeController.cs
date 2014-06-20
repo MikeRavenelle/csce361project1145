@@ -94,8 +94,10 @@ namespace csce361project1145.Controllers
             // var locations = context.locations.Where(x => x.locationId == 2).ToList();
             return Json(comments.Select(x => new
             {
+                commentId = x.commentId,
                 commentText = x.commentText,
-                userId = x.userId
+                userId = x.userId,
+                pictureId = x.pictureId
                 
             }),
                   JsonRequestBehavior.AllowGet);
@@ -116,6 +118,34 @@ namespace csce361project1145.Controllers
 
             }),
                   JsonRequestBehavior.AllowGet);
+        }
+
+        [System.Web.Services.WebMethod]
+        public ActionResult addComment(String userId, String pictureId, String commentText)
+        {
+            var comment = new comment();
+            var context = new dsimpsonEntities4();
+
+            comment.userId = Convert.ToInt32(userId);
+            comment.pictureId = Convert.ToInt32(pictureId);
+            comment.commentText = commentText;
+            context.comments.Add(comment);
+            context.SaveChanges();
+
+            return View("ViewMap");
+        }
+
+        [System.Web.Services.WebMethod]
+        public ActionResult removeComment(String commentId)
+        {
+            
+            var context = new dsimpsonEntities4();
+            var commentInt = Convert.ToInt32(commentId);
+            var comment = context.comments.Where(x => x.commentId == commentInt).ToList();
+            context.comments.Remove(comment[0]);
+            context.SaveChanges();
+
+            return View("ViewMap");
         }
     }
 }
