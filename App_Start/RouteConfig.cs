@@ -32,6 +32,12 @@ namespace csce361project1145
             );
 
             routes.MapRoute(
+                name: "removePicture",
+                url: "removePicture",
+                defaults: new { controller = "Home", action = "removePicture" }
+            );
+
+            routes.MapRoute(
                 name: "getuser",
                 url: "getuser",
                 defaults: new { controller = "Home", action = "getUser" }

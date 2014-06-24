@@ -35,20 +35,56 @@
 
     //Delete a comment from view page
     function deleteComment(commentId) {
+        
+        var confirm = window.confirm("Please click okay to confirm the removal of your comment");
 
-        var ajaxData = { commentId: commentId };
-        $.ajax({
-            url: '@Url.RouteUrl("removeComment")',
-            data: ajaxData,
-            dataType: 'json',
-            type: "POST",
-            async: false,
-            success: function () {
+        if (confirm == true) {
 
-            }
-        });
 
-        window.location.reload()
+            var ajaxData = { commentId: commentId };
+            $.ajax({
+                url: '@Url.RouteUrl("removeComment")',
+                data: ajaxData,
+                dataType: 'json',
+                type: "POST",
+                async: false,
+                success: function () {
+
+                }
+            });
+
+            window.location.reload()
+           
+        } 
+
+
+    }
+
+    //Delete an image, it's comments, and the location if it is the only image from view page
+    function deletePicture(pictureId, locationId) {
+
+        var confirm = window.confirm("Please click okay to confirm the removal of your image and all of its comments");
+
+        if (confirm == true) {
+
+            
+            var ajaxData = { pictureId: pictureId, locationId: locationId };
+            $.ajax({
+                url: '@Url.RouteUrl("removePicture")',
+                data: ajaxData,
+                dataType: 'json',
+                type: "POST",
+                async: false,
+                success: function () {
+
+                }
+            });
+
+            window.location.reload()
+
+        }
+
+
     }
 
 
@@ -123,13 +159,16 @@
                     for(var j = 0; j<campusPictures.length; ++j)
                     {
                         campusPic = campusPictures[j];
-                        
+
+                        if (campusPic['userId'] == 3) {
+                            contentString += '<button type="button" onclick="deletePicture(' + campusPic['pictureId'] + ', ' + campusPic['locationId'] + ')">Remov Image</button>';
+                        }
                         contentString += '<img height="200px" width="400px"src="' + campusPic['url'] + '" alt="Smiley face">'
                                + '<div class="caption">' + campusPic['caption'] + '</div>';
                        
                         //Get all comments for the current picture from HomeController.getComments via
                         //   getcomments route
-                       var pictureId = campusPic['id'];
+                       var pictureId = campusPic['pictureId'];
                        var ajaxPictureData = { pictureId: pictureId };
                         $.ajax({
                             url: '@Url.RouteUrl("getcomments")',
@@ -165,7 +204,7 @@
                                              '<td class="infoWindow_comment">' + '<div>' + comment['commentText'] + '</div> </td>';
                             if (comment['userId'] == 3)
                             {
-                               contentString += '<td><button type="button" onclick="deleteComment(' + comment['commentId'] + ')">Remove</button></td></tr>';
+                               contentString += '<td><button type="button" onclick="deleteComment(' + comment['commentId'] + ')">Remove</button></td>';
                             }
                             
                             contentString += '</tr>'

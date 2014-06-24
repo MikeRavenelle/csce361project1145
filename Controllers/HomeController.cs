@@ -77,7 +77,9 @@ namespace csce361project1145.Controllers
             // var locations = context.locations.Where(x => x.locationId == 2).ToList();
             return Json(pictures.Select(x => new
             {
-                id = x.pictureId,
+                userId = x.userId,
+                pictureId = x.pictureId,
+                locationId = x.locationId,
                 url = x.url,
                 caption = x.caption
             }),
@@ -144,6 +146,36 @@ namespace csce361project1145.Controllers
             var comment = context.comments.Where(x => x.commentId == commentInt).ToList();
             context.comments.Remove(comment[0]);
             context.SaveChanges();
+
+            return View("ViewMap");
+        }
+
+        [System.Web.Services.WebMethod]
+        public ActionResult removePicture(String pictureId, String locationId)
+        {
+
+            var context = new dsimpsonEntities4();
+            var pictureInt = Convert.ToInt32(pictureId);
+            var locationInt = Convert.ToInt32(locationId);
+
+            var comment = context.comments.Where(x => x.pictureId == pictureInt).ToList();
+            for (int index = 0; index < comment.Count; ++index)
+            {
+                context.comments.Remove(comment[index]);
+            }
+            context.SaveChanges();
+
+            var picture = context.pictures.Where(x => x.pictureId == pictureInt).ToList();
+            context.pictures.Remove(picture[0]);
+            context.SaveChanges();
+
+            picture = context.pictures.Where(x => x.locationId == locationInt).ToList();
+            if (picture.Count == 0)
+            {
+                var location = context.locations.Where(x => x.locationId == locationInt).ToList();
+                context.locations.Remove(location[0]);
+                context.SaveChanges();
+            }
 
             return View("ViewMap");
         }
