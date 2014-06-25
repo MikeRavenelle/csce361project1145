@@ -18,9 +18,9 @@ namespace csce361project1145
             //    clientId: "",
             //    clientSecret: "");
 
-            //OAuthWebSecurity.RegisterTwitterClient(
-            //    consumerKey: "",
-            //    consumerSecret: "");
+            OAuthWebSecurity.RegisterTwitterClient(
+                consumerKey: "osNxB6VGWYOHIvQ9akS6UFDJc",
+                consumerSecret: "5SH8dPsjEs1FFqB8AQgzSXhmD791BQ4OkkVnPHvKRO7gCqwj3K");
 
             //OAuthWebSecurity.RegisterFacebookClient(
             //    appId: "",
