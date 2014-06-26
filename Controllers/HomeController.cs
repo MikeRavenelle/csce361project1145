@@ -66,6 +66,26 @@ namespace csce361project1145.Controllers
                   JsonRequestBehavior.AllowGet);
         }
 
+
+        [System.Web.Services.WebMethod]
+        public ActionResult getLocationsById(String locationId)
+        {
+            var locationInt = Convert.ToInt32(locationId);
+            var context = new dsimpsonEntities4();
+
+            var locations = context.locations.Where(x => x.locationId == locationInt).ToList();
+                
+            return Json(locations.Select(x => new
+            {
+                
+                locationId = x.locationId,
+                longitude = x.longitude,
+                latitude = x.latitude
+            }),
+                  JsonRequestBehavior.AllowGet);
+        }
+        
+
         [System.Web.Services.WebMethod]
         public ActionResult getPictures(String locationId)
         {
@@ -179,5 +199,45 @@ namespace csce361project1145.Controllers
 
             return View("ViewMap");
         }
+
+        [System.Web.Services.WebMethod]
+        public ActionResult getUserId(String userName)
+        {
+            var context = new dsimpsonEntities4();
+            var users = context.users.Where(x => x.userName == userName).ToList();
+            
+            return Json(users.Select(x => new
+            {
+                userId = x.userId
+
+            }),
+
+            JsonRequestBehavior.AllowGet);
+        }
+
+        [System.Web.Services.WebMethod]
+        public ActionResult getPhotoByUser(String userId)
+        {
+            var context = new dsimpsonEntities4();
+            var userInt = Convert.ToInt32(userId);
+
+            var photos = context.pictures.Where(x => x.userId == userInt).ToList();
+
+            return Json(photos.Select(x => new
+            {
+                pictureId = x.pictureId,
+                caption = x.caption,
+                locationId = x.locationId,
+                userId  = x.userId,
+                url = x.url
+            }),
+
+            JsonRequestBehavior.AllowGet);
+        }
+
+
+
     }
+
+    
 }
