@@ -1,15 +1,22 @@
 ﻿@{
-    Layout = "~/Views/Shared/_LayoutLog.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Home Page";
 }
 @section featured {
+   @if (Request.IsAuthenticated)
+   {
+       <script>
+           window.location.href = "@Url.Action("ViewMap", "home")";
+    </script>
 
-    <h2>Please Log in:</h2>
-    Username: @Html.TextBox("Quantity", "", new { placeholder = "Username" })
-<br />
-    Password: @Html.Password("pass", "", new { placeholder = "Password" })
-<br />
-    <input type="image" src="~/Content/Images/signInWithTwitterButton.png" id="loginButton" onclick="window.location.href='csce361project1145.AuthConfig.RegisterAuth()'" />
+   }
+   else
+   {
+        <script>
+           window.location.href = "@Url.Action("Login", "Account")";
+        </script>
+
+   }
     
 
     

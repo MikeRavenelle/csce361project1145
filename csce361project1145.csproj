@@ -223,8 +223,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\auth.mdf" />
+    <Content Include="App_Data\auth_log.ldf">
+      <DependentUpon>auth.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\Images\Kauffman.jpg" />
     <Content Include="Content\Images\nMarker.png" />
+    <Content Include="Content\Images\signInWithTwitterButton.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -353,13 +358,11 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
-    <Content Include="Views\Shared\_LayoutLog.cshtml" />
     <Content Include="Views\Home\ViewMap.cshtml" />
     <Content Include="Views\Home\Upload.cshtml" />
     <Content Include="Views\Home\Search.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Content\Upload\" />
     <Folder Include="Data\" />
   </ItemGroup>

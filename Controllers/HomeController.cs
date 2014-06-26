@@ -23,24 +23,28 @@ namespace csce361project1145.Controllers
             return View();
         }
 
+        [Authorize]
         public ActionResult ViewMap()
         {
             //returns us to the ViewMap View
             return View();
         }
 
+        [Authorize]
         public ActionResult Search()
         {
             //returns us to the Search View
             return View();
         }
 
+        [Authorize]
         public ActionResult Upload()
         {
             //returns us to the Upload View
             return View();
         }
 
+        [Authorize]
         public ActionResult UploadPhoto()
         {
             var test = new location();
@@ -56,7 +60,7 @@ namespace csce361project1145.Controllers
 
         }
 
-
+        [Authorize]
         public string[] extractLocation(Bitmap image)
         {
             PropertyItem[] propItems = image.PropertyItems;
@@ -129,6 +133,7 @@ namespace csce361project1145.Controllers
            return table;
         }
 
+        [Authorize]
         public ActionResult getLocations()
         {
 
@@ -145,6 +150,7 @@ namespace csce361project1145.Controllers
                   JsonRequestBehavior.AllowGet);
         }
 
+        [Authorize]
         [System.Web.Services.WebMethod]
         public ActionResult getPictures(String locationId)
         {
@@ -165,6 +171,7 @@ namespace csce361project1145.Controllers
                   JsonRequestBehavior.AllowGet);
         }
 
+        [Authorize]
         [System.Web.Services.WebMethod]
         public ActionResult getComments(String pictureId)
         {
@@ -184,6 +191,7 @@ namespace csce361project1145.Controllers
                   JsonRequestBehavior.AllowGet);
         }
 
+        [Authorize]
         [System.Web.Services.WebMethod]
         public ActionResult getUser(String userId)
         {
@@ -201,6 +209,7 @@ namespace csce361project1145.Controllers
                   JsonRequestBehavior.AllowGet);
         }
 
+        [Authorize]
         [System.Web.Services.WebMethod]
         public ActionResult addComment(String userId, String pictureId, String commentText)
         {
@@ -216,6 +225,7 @@ namespace csce361project1145.Controllers
             return View("ViewMap");
         }
 
+        [Authorize]
         [System.Web.Services.WebMethod]
         public ActionResult removeComment(String commentId)
         {
@@ -229,6 +239,7 @@ namespace csce361project1145.Controllers
             return View("ViewMap");
         }
 
+        [Authorize]
         [System.Web.Services.WebMethod]
         public ActionResult removePicture(String pictureId, String locationId)
         {

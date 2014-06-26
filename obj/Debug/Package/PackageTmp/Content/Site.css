@@ -32,3 +32,29 @@
     width: 1000px;
     height: 600px;
 }
+
+.infoWindow_table
+{
+    width: 375px;
+    background-color: gray;
+    border: solid;
+    border-color: black;
+}
+
+.infoWindow_user
+{
+    width: 100px;
+    font-weight: bold;
+    border-bottom: solid;
+    border-color: darkgray;
+}
+
+.infoWindow_comment
+{
+    border-width: thin;
+    border-bottom: solid;
+    border-color: darkgray;
+    width: 260px;
+    color: crimson;
+
+}
