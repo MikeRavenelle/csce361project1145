@@ -32,6 +32,12 @@ namespace csce361project1145
            );
 
             routes.MapRoute(
+               name: "getCommentByUser",
+               url: "getCommentByUser",
+               defaults: new { controller = "Home", action = "getCommentByUser" }
+           );
+
+            routes.MapRoute(
                name: "getLocationsById",
                url: "getLocationsById",
                defaults: new { controller = "Home", action = "getLocationsById" }
