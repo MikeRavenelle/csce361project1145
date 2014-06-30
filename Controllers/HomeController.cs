@@ -132,7 +132,22 @@ namespace csce361project1145.Controllers
            table[0] = latDegrees +" "+latMinutes+" "+latSeconds;
            table[1] = longDegrees + " " + longMinutes + " " + longSeconds;
 
-           return table;
+           var context = new dsimpsonEntities4();
+           var location = context.locations.Where(x => x.longitude == table[1] && x.latitude == table[0]).ToList();
+           if(location.Count > 0)
+           {
+               return location.locationId;
+           }
+           else
+           {
+               var newLocation = new locations();
+               newLocation.longitude = table[1];
+               newLocation.latitude = table[0];
+               context.users.Add(newLocation);
+               context.SaveChanges();
+               
+               return newLocation.locationId;
+            }
         }
 
         [Authorize]
