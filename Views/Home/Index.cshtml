@@ -1,5 +1,14 @@
-﻿@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "Home Page";
-}
+ @if (Request.IsAuthenticated)
+   {
+        <script>
+           window.location.href = "@Url.Action("ViewMap", "home")";
+        </script>
 
+   }
+   else
+   {
+        <script>
+           window.location.href = "@Url.Action("Login", "Account")";
+        </script>
+
+   }
