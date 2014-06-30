@@ -200,7 +200,7 @@
                             });
                            
                             user = users[0];
-                            contentString += '<tr><td class="infoWindow_user">' + user['firstName'] + " " + user['lastName'] + ": " + '</td>' +
+                            contentString += '<tr><td class="infoWindow_user">' + user['userName'] + ": " + '</td>' +
                                              '<td class="infoWindow_comment">' + '<div>' + comment['commentText'] + '</div> </td>';
                             if (comment['userId'] == localStorage.userId)
                             {
