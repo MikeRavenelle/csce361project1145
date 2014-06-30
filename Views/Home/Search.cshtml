@@ -5,7 +5,7 @@
 
 <input type="radio" id="photo" name="search" />Photo <input type="text" id="photoText" /><br />
 <input type="radio" id="comment" name="search" />Comment<br />
-<input type="radio" id="radius" name="search" />Radius
+<input type="radio" id="radius" name="search" onclick="show_map()"/>Radius  Latitude: <input type="text" id="latitudeText" /> Longitude: <input type="text" id="longitudeText" />
 <input type="button" onclick="evaluate_search()" value="Search"/>
 
 <input type="button" id="Button2" onclick="window.location.href='@Url.Action("ViewMap","home")'"
@@ -28,6 +28,11 @@
 
         if (document.getElementById("comment").checked == true) {
             searchComments();
+        }
+
+        if(document.getElementById("radius").checked == true)
+        {
+            searchRadius();
         }
 
         
@@ -160,16 +165,7 @@
 
                 }
             });
-
-            //$('.' + commentId +'"').hide();
-
-            //$('#' + commentId).html("")
-
-          //  $('div[class=' + commentId + ']').hide();
-
         }
-
-
     }
 
     //Delete an image, it's comments, and the location if it is the only image from view page
@@ -198,6 +194,13 @@
 
 
     }
+
+
+    function searchRadius()
+    {
+
+    }
+
 
     function searchComments()
     {
@@ -340,4 +343,29 @@
         addMarkers(locationsList, pictures, map)
     }
     
+
+    function show_map()
+    {
+        var mapOptions = {
+            zoom: 17,
+            center: new google.maps.LatLng(40.8204419, -96.7005872),
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+        }
+        var map = new google.maps.Map(document.getElementById('map-canvas'),
+                            mapOptions);
+        google.maps.event.addListener(map, 'click', function(clickedSpot) {
+            setMarker(clickedSpot.latLng, map);
+        });
+    }
+
+    function setMarker(position, map)
+    {
+        var marker = new google.maps.Marker({
+            position: position,
+            map: map
+        });
+
+        document.getElementById("latitudeText").value = position.lat();
+
+    }
 </script>
