@@ -97,13 +97,16 @@
                                 });
 
                                 user = users[0];
-                                contentString += '<tr><td class="infoWindow_user">' + user['firstName'] + " " + user['lastName'] + ": " + '</td>' +
-                                                 '<td class="infoWindow_comment">' + '<div>' + comment['commentText'] + '</div> </td>';
+                                
+                                contentString += '<tr id="' + comment['commentId'] + '"><td class="infoWindow_user">' + user['firstName'] + " " + user['lastName'] + ": " + '</td>' +
+                                                 '<td class="infoWindow_comment">' + comment['commentText'] + '</td>';
+                                
                                 if (comment['userId'] == 3) {
                                     contentString += '<td><button type="button" onclick="deleteComment(' + comment['commentId'] + ')">Remove</button></td>';
                                 }
 
                                 contentString += '</tr>'
+                                window.alert(contentString);
                             }
 
                             contentString += '</table><input type="text" id="' + pictureId + '"><button type="button" onclick="addComment(' + 3 + ', ' + pictureId + ')">Post Comment!</button>';
@@ -144,6 +147,7 @@
 
         if (confirm == true) {
 
+            $('#' + commentId).hide();
 
             var ajaxData = { commentId: commentId };
             $.ajax({
@@ -157,7 +161,11 @@
                 }
             });
 
-            window.location.reload()
+            //$('.' + commentId +'"').hide();
+
+            //$('#' + commentId).html("")
+
+          //  $('div[class=' + commentId + ']').hide();
 
         }
 
@@ -191,8 +199,78 @@
 
     }
 
-    function searchByUserName()
+    function searchComments()
     {
+        var mapOptions = {
+            zoom: 17,
+            center: new google.maps.LatLng(40.8204419, -96.7005872),
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+        }
+        var map = new google.maps.Map(document.getElementById('map-canvas'),
+                            mapOptions);
+
+        var userName = document.getElementById("commentText").value;
+
+        var ajaxData = { userName: userName };
+
+        $.ajax({
+            url: '@Url.RouteUrl("getUserId")',
+            data: ajaxData,
+            dataType: 'json',
+            type: "POST",
+            async: false,
+            success: function (response) {
+                users = response;
+            }
+        });
+
+        user = users[0];
+        var userId = user['userId'];
+
+        //Get all photos of that user
+        var commentData = { userId: userId };
+        var comments = "";
+        $.ajax({
+            url: '@Url.RouteUrl("getCommentByUser")',
+            data: commentData,
+            dataType: 'json',
+            type: "POST",
+            async: false,
+            success: function (response) {
+                comments = response;
+            }
+        });
+
+        var locationsList = []
+        var locationIdList = []
+        for (var i = 0; i < pictures.length; ++i) {
+
+            var picture = pictures[i];
+            var locationId = picture['locationId'];
+            if (locationIdList.indexOf(locationId) == -1) {
+                locationIdList.push(locationId);
+                //Get Unique locations
+                var locationData = { locationId: locationId };
+
+                $.ajax({
+                    url: '@Url.RouteUrl("getLocationsById")',
+                    data: locationData,
+                    dataType: 'json',
+                    type: "POST",
+                    async: false,
+                    success: function (response) {
+                        locations = response;
+                    }
+                });
+
+                locationsList.push(locations[0]);
+            }
+        }
+
+        addMarkers(locationsList, pictures, map)
+    }
+
+    function searchByUserName() {
         var mapOptions = {
             zoom: 17,
             center: new google.maps.LatLng(40.8204419, -96.7005872),
