@@ -13,6 +13,20 @@
     <header>
         @if (Request.IsAuthenticated)
         {
+            if (Session["userId"]) == null)
+            {
+            <script>
+                $.ajax({
+                  url: '@Url.RouteUrl("getUserId")',
+                  dataType: 'json',
+                  async: false,
+                  success: function (response) {
+                  userId = response[0]['userId'];
+                  localStorage.setItem("userId", userId);
+                    }
+                });
+           </script>
+            }
             <text>
                 Hello, @Html.ActionLink(User.Identity.Name, "Manage", "Account", routeValues: null, htmlAttributes: new { @class = "username", title = "Manage" })!
                 @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
