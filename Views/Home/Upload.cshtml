@@ -16,16 +16,28 @@
     if (IsPost)
     {
         var uploadedFile = Request.Files[0];
-        fileName = Path.GetFileName(uploadedFile.FileName); //set this to the user name with a number that represents what number picture this is that he owns
-        fileLocation = Server.MapPath("~/Content/Upload/" +
-          fileName);
+        if(uploadedFile.GetExtension == ".jpg" || uploadedFile.GetExtension == ".jpeg")
+        {
+        fileName = Path.GetFileName(uploadedFile.FileName); 
+        fileLocation = Server.MapPath("~/Content/Upload/" + User.Identity.Name + fileName);
         uploadedFile.SaveAs(fileLocation);
         var picture = new picture();
         var context = new dsimpsonEntities4();
-        picture.url = fileLocation + fileName;
+        picture.url = fileLocation;
+        picture.userId = Session['userId'];
+        picture.caption = "Default Caption!";
+        picture.locationId = home.extractLocation(uploadedFile);
         context.pictures.Add(picture);
         context.SaveChanges();
-        pictureId = picture.pictureId;
+        }
+        else
+        {
+        <script>
+        window.alert("Please only upload jpeg/jpgs!");
+        window.location.assign(@Url.Action("Upload", "home"));
+        </script> 
+            
+        }
         
     }
 }
@@ -44,7 +56,7 @@
     @if (IsPost)
     {
     <script>
-        window.location.assign(@Url.Action("extractLocation", "home", new { id = pictureId}));
+        window.location.assign(@Url.Action("ViewMap", "home"));
     </script>    
     }
 </body>
