@@ -52,6 +52,7 @@ namespace csce361project1145.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
+            Session.Remove("userId");
             WebSecurity.Logout();
 
             return RedirectToAction("Index", "Home");

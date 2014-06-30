@@ -11,6 +11,8 @@ using System.Drawing;
 using System.Threading.Tasks;
 using System.Drawing.Imaging;
 using System.Data.Entity;
+using Newtonsoft.Json;
+
 
 
 namespace csce361project1145.Controllers
@@ -108,7 +110,7 @@ namespace csce361project1145.Controllers
                 //Longitude Ref prop[42]
                 string longRef = encodings.GetString(propItems[42].Value);
 
-           cursor: pointer;     //longitude 
+           //longitude 
                 uint longDegreesNumerator = BitConverter.ToUInt32(propItems[43].Value, 0);
                 uint longDegreesDenominator = BitConverter.ToUInt32(propItems[43].Value, 4);
                  longDegrees = longDegreesNumerator / (float)longDegreesDenominator;
@@ -204,7 +206,7 @@ namespace csce361project1145.Controllers
                 commentId = x.commentId,
                 commentText = x.commentText,
                 userId = x.userId,
-           cursor: pointer;     pictureId = x.pictureId
+                pictureId = x.pictureId
                 
             }),
                   JsonRequestBehavior.AllowGet);
@@ -289,20 +291,6 @@ namespace csce361project1145.Controllers
             return View("ViewMap");
         }
 
-        [System.Web.Services.WebMethod]
-        public ActionResult getUserId(String userName)
-        {
-            var context = new dsimpsonEntities4();
-            var users = context.users.Where(x => x.userName == userName).ToList();
-            
-            return Json(users.Select(x => new
-            {
-                userId = x.userId
-
-            }),
-
-            JsonRequestBehavior.AllowGet);
-        }
 
         [System.Web.Services.WebMethod]
         public ActionResult getPhotoByUser(String userId)
@@ -322,6 +310,38 @@ namespace csce361project1145.Controllers
             }),
 
             JsonRequestBehavior.AllowGet);
+        }
+
+        [System.Web.Services.WebMethod]
+        public ActionResult getUserId()
+        {
+            var userName = User.Identity.Name;
+            var context = new dsimpsonEntities4();
+
+            var user = context.users.Where(x => x.userName == userName).ToList();
+            if( user.Count > 0 )
+            {
+                return Json(user.Select(x => new
+                {
+                    userId = x.userId
+                }),
+
+                    JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                var newUser = new user();
+
+                newUser.userName = userName;
+                newUser.firstName = "null";
+                newUser.LastName = "null";
+                context.users.Add(newUser);
+                context.SaveChanges();
+
+                return Json(JsonConvert.SerializeObject(new { userId = newUser.userId }));
+
+            }
+
         }
 
 
