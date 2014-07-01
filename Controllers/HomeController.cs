@@ -220,7 +220,6 @@ namespace csce361project1145.Controllers
         }
 
         [Authorize]
-            var context = new dsimpsonEntities5();
         [System.Web.Services.WebMethod]
         public ActionResult getPhotoByUser(String userId)
         {

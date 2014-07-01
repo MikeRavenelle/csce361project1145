@@ -125,6 +125,7 @@
         try
         {
         context.SaveChanges();
+        <script> window.location.href = "@Url.Action("ViewMap", "home")";</script>
         }
         catch (DbEntityValidationException dbEx)
         {
@@ -158,11 +159,5 @@
         allowMoreFilesToBeAdded: false,
         includeFormTag: true,
         uploadText: "Upload")
-    @if (IsPost)
-    {
-    <script>
-        window.location.assign(@Url.Action("ViewMap", "home"));
-    </script>    
-    }
 </body>
 </html>

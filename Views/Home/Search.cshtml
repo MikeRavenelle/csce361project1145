@@ -3,9 +3,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<input type="radio" id="photo" name="search" onclick="enable_photo()"/>Photo <input type="text" id="photoText" /><br />
+<input type="radio" checked ="checked"  id="photo" name="search" onclick="enable_photo()"/>Photo <input type="text" id="photoText" /><br />
 <input type="radio" id="comment" name="search" onclick="enable_comment()" />Comment<br />
-<input type="radio" id="radius" name="search" onclick="show_map()"/>Radius Latitude: <input type="text" id="latText" /> Longitude <input type="text" id="longText"  /> Range <input type="text" id="range" /> Feet
+<input type="radio" id="radius" name="search" onclick="show_map()"/>Radius Latitude: <input disabled type="text" id="latText" /> Longitude <input disabled type="text" id="longText" /> Range <input disabled type="text" id="range" /> Feet
 <input type="button" onclick="evaluate_search()" value="Search"/>
 
 <input type="button" id="Button2" onclick="window.location.href='@Url.Action("ViewMap","home")'"
@@ -23,20 +23,27 @@
     function evaluate_search()
     {
         
-        if (document.getElementById("photo").checked == true) {   
+        if (document.getElementById("photo").checked) {   
             searchByUserName();
         }
 
-        if (document.getElementById("comment").checked == true) {
+        if (document.getElementById("comment").checked) {
             searchComments();
         }
 
-        if(document.getElementById("radius").checked == true)
+        if(document.getElementById("radius").checked)
         {
             searchByRadius();
         }
 
         
+    }
+
+    //get specific cookie
+    function getId() {
+        var regExp = new RegExp("userId" + "=([^;]+)");
+        var value = regExp.exec(document.cookie);
+        return (value != null) ? unescape(value[1]) : null;
     }
 
     
@@ -72,7 +79,7 @@
                         if (picture['locationId'] == currentLocation['locationId']) {
 
                             contentString += '<div id="div' + picture['pictureId'] + '">';
-                            if (picture['userId'] == 3) {
+                            if (picture['userId'] == getId()) {
                                 contentString += '<button type="button" onclick="deletePicture(' + picture['pictureId'] + ', ' + picture['locationId'] + ')">Remove Image</button>';
                             }
 
@@ -113,9 +120,9 @@
                                 });
 
                                 user = users[0];
-                                contentString += '<tr><td class="infoWindow_user">' + user['firstName'] + " " + user['lastName'] + ": " + '</td>' +
+                                contentString += '<tr><td class="infoWindow_user">' + user['userName'] + ": " + '</td>' +
                                                  '<td class="infoWindow_comment">' + '<div>' + comment['commentText'] + '</div> </td>';
-                                if (comment['userId'] == 3) {
+                                if (comment['userId'] == getId() ) {
                                     contentString += '<td><button type="button" onclick="deleteComment(' + comment['commentId'] + ')">Remove</button></td>';
                                 }
 
