@@ -57,15 +57,15 @@
                 //Latitude 
                 uint latDegreesNumerator = BitConverter.ToUInt32(propItems[41].Value, 0);
                 uint latDegreesDenominator = BitConverter.ToUInt32(propItems[41].Value, 4);
-                 latDegrees = latDegreesNumerator / (float)latDegreesDenominator;
+                 latDegrees =(float)latDegreesNumerator / (float)latDegreesDenominator;
 
                 uint latMinutesNumerator = BitConverter.ToUInt32(propItems[41].Value, 8);
                 uint latMinutesDenominator = BitConverter.ToUInt32(propItems[41].Value, 12);
-                 latMinutes = latMinutesNumerator / (float)latMinutesDenominator;
+                 latMinutes = ((float)latMinutesNumerator / (float)latMinutesDenominator)/60;
 
                 uint latSecondsNumerator = BitConverter.ToUInt32(propItems[41].Value, 16);
                 uint latSecondsDenominator = BitConverter.ToUInt32(propItems[41].Value, 20);
-                 latSeconds = latSecondsNumerator / (float)latSecondsDenominator;
+                 latSeconds = ((float)latSecondsNumerator / (float)latSecondsDenominator)/3600;
 
             }
             catch
@@ -81,15 +81,15 @@
            //longitude 
                 uint longDegreesNumerator = BitConverter.ToUInt32(propItems[43].Value, 0);
                 uint longDegreesDenominator = BitConverter.ToUInt32(propItems[43].Value, 4);
-                 longDegrees = longDegreesNumerator / (float)longDegreesDenominator;
+                 longDegrees = -1 * (float)longDegreesNumerator / (float)longDegreesDenominator;
 
                 uint longMinutesNumerator = BitConverter.ToUInt32(propItems[43].Value, 8);
                 uint longMinutesDenominator = BitConverter.ToUInt32(propItems[43].Value, 12);
-                 longMinutes = longMinutesNumerator / (float)longMinutesDenominator;
+                 longMinutes = ((float)longMinutesNumerator / (float)longMinutesDenominator)/60;
 
                 uint longSecondsNumerator = BitConverter.ToUInt32(propItems[43].Value, 16);
                 uint longSecondsDenominator = BitConverter.ToUInt32(propItems[43].Value, 20);
-                 longSeconds = longSecondsNumerator / (float)longSecondsDenominator;
+                 longSeconds = ((float)longSecondsNumerator / (float)longSecondsDenominator)/3600;
             }
             catch
             {
