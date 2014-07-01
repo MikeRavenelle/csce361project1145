@@ -74,7 +74,7 @@ namespace csce361project1145.Controllers
            // var locations = context.locations.Where(x => x.locationId == 2).ToList();
             return Json(locations.Select(x => new
             {
-                id = x.locationId,
+                locationId = x.locationId,
                 longitude = x.longitude,
                 latitude = x.latitude
             }),
@@ -220,6 +220,7 @@ namespace csce361project1145.Controllers
         }
 
         [Authorize]
+            var context = new dsimpsonEntities5();
         [System.Web.Services.WebMethod]
         public ActionResult getPhotoByUser(String userId)
         {

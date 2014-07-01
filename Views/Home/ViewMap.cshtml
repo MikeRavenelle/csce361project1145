@@ -12,81 +12,8 @@
 
 
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+<script src="../../Scripts/pictureMaintenance.js"></script>
 <script>
-
-    //Add a comment from view page
-    function addComment(userId, pictureId) {
-
-        var commentText = document.getElementById(pictureId).value;
-
-        var ajaxData = { userId: userId, pictureId: pictureId, commentText: commentText };
-        $.ajax({
-            url: '@Url.RouteUrl("addComment")',
-            data: ajaxData,
-            dataType: 'json',
-            type: "POST",
-            async: false,
-            success: function () {
-                
-            }
-        });
-        window.location.reload()
-    }
-
-    //Delete a comment from view page
-    function deleteComment(commentId) {
-        
-        var confirm = window.confirm("Please click okay to confirm the removal of your comment");
-
-        if (confirm == true) {
-
-
-            var ajaxData = { commentId: commentId };
-            $.ajax({
-                url: '@Url.RouteUrl("removeComment")',
-                data: ajaxData,
-                dataType: 'json',
-                type: "POST",
-                async: false,
-                success: function () {
-
-                }
-            });
-
-            window.location.reload()
-           
-        } 
-
-
-    }
-
-    //Delete an image, it's comments, and the location if it is the only image from view page
-    function deletePicture(pictureId, locationId) {
-
-        var confirm = window.confirm("Please click okay to confirm the removal of your image and all of its comments");
-
-        if (confirm == true) {
-
-            
-            var ajaxData = { pictureId: pictureId, locationId: locationId };
-            $.ajax({
-                url: '@Url.RouteUrl("removePicture")',
-                data: ajaxData,
-                dataType: 'json',
-                type: "POST",
-                async: false,
-                success: function () {
-
-                }
-            });
-
-            window.location.reload()
-
-        }
-
-
-    }
-
 
     // Call to HomeController.getLocations via getdata Route to get locations
     $(document).ready(function () {
@@ -128,7 +55,7 @@
 
                 var campusSpot = points[i];
                 var location = new google.maps.LatLng(campusSpot['longitude'], campusSpot['latitude']);
-                var locationId = campusSpot['id'].toString();
+                var locationId = campusSpot['locationId'].toString();
                 var name = campusSpot[0];
                 var image = "../../Content/Images/nMarker.png";
 
@@ -165,7 +92,7 @@
                     for(var j = 0; j<campusPictures.length; ++j)
                     {
                         campusPic = campusPictures[j];
-
+                        contentString += '<div id="div' + campusPic['pictureId'] + '">';
                         if (campusPic['userId'] == getId() ) {
                             contentString += '<button type="button" onclick="deletePicture(' + campusPic['pictureId'] + ', ' + campusPic['locationId'] + ')">Remove Image</button>';
                         }
@@ -218,6 +145,7 @@
                         }
                         
                         contentString += '</table><input type="text" id="' + pictureId + '"><button type="button" onclick="addComment(' + getId() + ', ' + pictureId + ')">Post Comment!</button>';
+                        contentString += '</div>';
                         var test;
                     }
                     infowindow.setContent(contentString);
