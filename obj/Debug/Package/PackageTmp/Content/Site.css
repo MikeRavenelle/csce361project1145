@@ -1,0 +1,60 @@
+/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error
+{
+    color: #ff0000;
+}
+
+.field-validation-valid
+{
+    display: none;
+}
+
+.input-validation-error
+{
+    border: 1px solid #ff0000;
+    background-color: #ffeeee;
+}
+
+.validation-summary-errors
+{
+    font-weight: bold;
+    color: #ff0000;
+}
+
+.validation-summary-valid
+{
+    display: none;
+}
+
+#map-canvas
+{
+    width: 1000px;
+    height: 600px;
+}
+
+.infoWindow_table
+{
+    width: 375px;
+    background-color: gray;
+    border: solid;
+    border-color: black;
+}
+
+.infoWindow_user
+{
+    width: 100px;
+    font-weight: bold;
+    border-bottom: solid;
+    border-color: darkgray;
+}
+
+.infoWindow_comment
+{
+    border-width: thin;
+    border-bottom: solid;
+    border-color: darkgray;
+    width: 260px;
+    color: crimson;
+
+}

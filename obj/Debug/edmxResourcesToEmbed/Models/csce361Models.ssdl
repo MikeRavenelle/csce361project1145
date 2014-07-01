@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="csce361project1145Model.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="comments">
+    <Key>
+      <PropertyRef Name="commentId" />
+    </Key>
+    <Property Name="commentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="pictureId" Type="int" Nullable="false" />
+    <Property Name="userId" Type="int" Nullable="false" />
+    <Property Name="commentText" Type="varchar" MaxLength="150" Nullable="false" />
+  </EntityType>
+  <EntityType Name="locations">
+    <Key>
+      <PropertyRef Name="locationId" />
+    </Key>
+    <Property Name="locationId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="longitude" Type="double" />
+    <Property Name="latitude" Type="double" />
+  </EntityType>
+  <EntityType Name="pictures">
+    <Key>
+      <PropertyRef Name="pictureId" />
+    </Key>
+    <Property Name="pictureId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="url" Type="varchar" MaxLength="45" Nullable="false" />
+    <Property Name="userId" Type="int" Nullable="false" />
+    <Property Name="caption" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="locationId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="users">
+    <Key>
+      <PropertyRef Name="userId" />
+    </Key>
+    <Property Name="userId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="userName" Type="varchar" MaxLength="45" Nullable="false" />
+    <Property Name="firstName" Type="varchar" MaxLength="45" Nullable="false" />
+    <Property Name="LastName" Type="varchar" MaxLength="45" Nullable="false" />
+  </EntityType>
+  <Association Name="comments_ibfk_1">
+    <End Role="users" Type="Self.users" Multiplicity="1" />
+    <End Role="comments" Type="Self.comments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="userId" />
+      </Principal>
+      <Dependent Role="comments">
+        <PropertyRef Name="userId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="comments_ibfk_2">
+    <End Role="pictures" Type="Self.pictures" Multiplicity="1" />
+    <End Role="comments" Type="Self.comments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="pictures">
+        <PropertyRef Name="pictureId" />
+      </Principal>
+      <Dependent Role="comments">
+        <PropertyRef Name="pictureId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="pictures_ibfk_1">
+    <End Role="users" Type="Self.users" Multiplicity="1" />
+    <End Role="pictures" Type="Self.pictures" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="userId" />
+      </Principal>
+      <Dependent Role="pictures">
+        <PropertyRef Name="userId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="pictures_ibfk_2">
+    <End Role="locations" Type="Self.locations" Multiplicity="1" />
+    <End Role="pictures" Type="Self.pictures" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="locations">
+        <PropertyRef Name="locationId" />
+      </Principal>
+      <Dependent Role="pictures">
+        <PropertyRef Name="locationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="csce361project1145ModelStoreContainer">
+    <EntitySet Name="comments" EntityType="Self.comments" Schema="dsimpson" store:Type="Tables" />
+    <EntitySet Name="locations" EntityType="Self.locations" Schema="dsimpson" store:Type="Tables" />
+    <EntitySet Name="pictures" EntityType="Self.pictures" Schema="dsimpson" store:Type="Tables" />
+    <EntitySet Name="users" EntityType="Self.users" Schema="dsimpson" store:Type="Tables" />
+    <AssociationSet Name="comments_ibfk_1" Association="Self.comments_ibfk_1">
+      <End Role="users" EntitySet="users" />
+      <End Role="comments" EntitySet="comments" />
+    </AssociationSet>
+    <AssociationSet Name="comments_ibfk_2" Association="Self.comments_ibfk_2">
+      <End Role="pictures" EntitySet="pictures" />
+      <End Role="comments" EntitySet="comments" />
+    </AssociationSet>
+    <AssociationSet Name="pictures_ibfk_1" Association="Self.pictures_ibfk_1">
+      <End Role="users" EntitySet="users" />
+      <End Role="pictures" EntitySet="pictures" />
+    </AssociationSet>
+    <AssociationSet Name="pictures_ibfk_2" Association="Self.pictures_ibfk_2">
+      <End Role="locations" EntitySet="locations" />
+      <End Role="pictures" EntitySet="pictures" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

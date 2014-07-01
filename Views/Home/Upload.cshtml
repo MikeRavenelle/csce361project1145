@@ -1,0 +1,63 @@
+﻿@{
+    ViewBag.Title = "Upload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Upload</h2>
+@using Microsoft.Web.Helpers
+@using System.Drawing
+@using csce361project1145.Models;
+
+@{
+    var fileName = "";
+    var fileLocation = "";
+    var pictureId = 0;
+
+    if (IsPost)
+    {
+        var uploadedFile = Request.Files[0];
+        if(uploadedFile.GetExtension == ".jpg" || uploadedFile.GetExtension == ".jpeg")
+        {
+        fileName = Path.GetFileName(uploadedFile.FileName); 
+        fileLocation = Server.MapPath("~/Content/Upload/" + User.Identity.Name + fileName);
+        uploadedFile.SaveAs(fileLocation);
+        var picture = new picture();
+        var context = new dsimpsonEntities4();
+        picture.url = fileLocation;
+        picture.userId = Session['userId'];
+        picture.caption = "Default Caption!";
+        picture.locationId = home.extractLocation(uploadedFile);
+        context.pictures.Add(picture);
+        context.SaveChanges();
+        }
+        else
+        {
+        <script>
+        window.alert("Please only upload jpeg/jpgs!");
+        window.location.assign(@Url.Action("Upload", "home"));
+        </script> 
+            
+        }
+        
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload your picture!</title>
+</head>
+<body>
+    <h1>Please select your picture:</h1>
+    @FileUpload.GetHtml(
+        initialNumberOfFiles: 1,
+        allowMoreFilesToBeAdded: false,
+        includeFormTag: true,
+        uploadText: "Upload")
+    @if (IsPost)
+    {
+    <script>
+        window.location.assign(@Url.Action("ViewMap", "home"));
+    </script>    
+    }
+</body>
+</html>
