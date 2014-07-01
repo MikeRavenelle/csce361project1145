@@ -21,12 +21,14 @@
     if (IsPost)
     {
         var uploadedFile = Request.Files[0];
+        var date = DateTime.Now.ToString("yyyyMMddHHmmssfff");
         fileName = Path.GetFileName(uploadedFile.FileName); 
-        fileLocation = Server.MapPath("~/Content/Upload/" + User.Identity.Name + fileName);
+        fileLocation = Server.MapPath("~/Content/Upload/" + User.Identity.Name + date + fileName);
         uploadedFile.SaveAs(fileLocation);
+        var serverFileLocation = "../../Content/Upload/" + User.Identity.Name + date + fileName;
         var picture = new picture();
         var context = new dsimpsonEntities8();
-        picture.url = fileLocation;
+        picture.url = serverFileLocation;
         picture.userId = Convert.ToInt32(Request.Cookies["userId"].Value);
         picture.caption = "Default Caption!";
         var image = new Bitmap(uploadedFile.InputStream);
@@ -140,15 +142,10 @@
         
        
 
-        /*<script>
-        window.alert("Please only upload jpeg/jpgs!");
-        window.location.assign(@Url.Action("Upload", "home"));
-        </script> 
-            
-        }*/
+
         
     }
-}
+
 <!DOCTYPE html>
 <html>
 <head>

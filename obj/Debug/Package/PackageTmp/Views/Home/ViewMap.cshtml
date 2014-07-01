@@ -99,6 +99,12 @@
             }
         });
     });
+            //get specific cookie
+             function getId() {
+                var regExp = new RegExp("userId" + "=([^;]+)");
+                var value = regExp.exec(document.cookie);
+                return (value != null) ? unescape(value[1]) : null;
+             }
    
         //Create the map via google maps api zoomed into UNL City Campus
         function initialize() {
@@ -160,8 +166,8 @@
                     {
                         campusPic = campusPictures[j];
 
-                        if (campusPic['userId'] == 3) {
-                            contentString += '<button type="button" onclick="deletePicture(' + campusPic['pictureId'] + ', ' + campusPic['locationId'] + ')">Remov Image</button>';
+                        if (campusPic['userId'] == getId() ) {
+                            contentString += '<button type="button" onclick="deletePicture(' + campusPic['pictureId'] + ', ' + campusPic['locationId'] + ')">Remove Image</button>';
                         }
                         contentString += '<img height="200px" width="400px"src="' + campusPic['url'] + '" alt="Smiley face">'
                                + '<div class="caption">' + campusPic['caption'] + '</div>';
@@ -200,9 +206,9 @@
                             });
                            
                             user = users[0];
-                            contentString += '<tr><td class="infoWindow_user">' + user['firstName'] + " " + user['lastName'] + ": " + '</td>' +
+                            contentString += '<tr><td class="infoWindow_user">' + user['userName'] + ": " + '</td>' +
                                              '<td class="infoWindow_comment">' + '<div>' + comment['commentText'] + '</div> </td>';
-                            if (comment['userId'] == 3)
+                            if (comment['userId'] == getId())
                             {
                                contentString += '<td><button type="button" onclick="deleteComment(' + comment['commentId'] + ')">Remove</button></td>';
                             }
@@ -211,7 +217,7 @@
                                            
                         }
                         
-                        contentString += '</table><input type="text" id="' + pictureId +  '"><button type="button" onclick="addComment(' + 3 + ', ' + pictureId + ')">Post Comment!</button>';
+                        contentString += '</table><input type="text" id="' + pictureId + '"><button type="button" onclick="addComment(' + getId() + ', ' + pictureId + ')">Post Comment!</button>';
                         var test;
                     }
                     infowindow.setContent(contentString);

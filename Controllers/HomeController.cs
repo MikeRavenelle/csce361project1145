@@ -238,8 +238,7 @@ namespace csce361project1145.Controllers
             // var locations = context.locations.Where(x => x.locationId == 2).ToList();
             return Json(users.Select(x => new
             {
-                firstName = x.firstName,
-                lastName = x.lastName
+                userName = x.userName
 
             }),
                   JsonRequestBehavior.AllowGet);
