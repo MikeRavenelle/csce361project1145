@@ -62,93 +62,7 @@ namespace csce361project1145.Controllers
 
         }
 
-        [Authorize]
-        public string[] extractLocation(Bitmap image)
-        {
-            PropertyItem[] propItems = image.PropertyItems;
-
-            
-            ASCIIEncoding encodings = new ASCIIEncoding();
-            string latRef ="0";
-            String[] table = new String[2];
-            table[0] = " ";
-            table[1] = " ";
-            float latDegrees = 0;
-            float latMinutes = 0;
-            float latSeconds = 0;
-            float longDegrees = 0;
-            float longMinutes = 0;
-            float longSeconds = 0;
-            try
-            {
-                //latitude Ref prop[40]
-
-                latRef = encodings.GetString(propItems[40].Value);
-
-                
-                //Latitude 
-                uint latDegreesNumerator = BitConverter.ToUInt32(propItems[41].Value, 0);
-                uint latDegreesDenominator = BitConverter.ToUInt32(propItems[41].Value, 4);
-                 latDegrees = latDegreesNumerator / (float)latDegreesDenominator;
-
-                uint latMinutesNumerator = BitConverter.ToUInt32(propItems[41].Value, 8);
-                uint latMinutesDenominator = BitConverter.ToUInt32(propItems[41].Value, 12);
-                 latMinutes = latMinutesNumerator / (float)latMinutesDenominator;
-
-                uint latSecondsNumerator = BitConverter.ToUInt32(propItems[41].Value, 16);
-                uint latSecondsDenominator = BitConverter.ToUInt32(propItems[41].Value, 20);
-                 latSeconds = latSecondsNumerator / (float)latSecondsDenominator;
-
-            }
-            catch
-            {
-                Console.WriteLine("Error in latitude ");
-            }
-             
-            try
-            {
-                //Longitude Ref prop[42]
-                string longRef = encodings.GetString(propItems[42].Value);
-
-           //longitude 
-                uint longDegreesNumerator = BitConverter.ToUInt32(propItems[43].Value, 0);
-                uint longDegreesDenominator = BitConverter.ToUInt32(propItems[43].Value, 4);
-                 longDegrees = longDegreesNumerator / (float)longDegreesDenominator;
-
-                uint longMinutesNumerator = BitConverter.ToUInt32(propItems[43].Value, 8);
-                uint longMinutesDenominator = BitConverter.ToUInt32(propItems[43].Value, 12);
-                 longMinutes = longMinutesNumerator / (float)longMinutesDenominator;
-
-                uint longSecondsNumerator = BitConverter.ToUInt32(propItems[43].Value, 16);
-                uint longSecondsDenominator = BitConverter.ToUInt32(propItems[43].Value, 20);
-                 longSeconds = longSecondsNumerator / (float)longSecondsDenominator;
-            }
-            catch
-            {
-                Console.WriteLine("Error in longitude");
-            }
-
-            //table 0 is latitude; table 1 is longitude 
-           table[0] = latDegrees +" "+latMinutes+" "+latSeconds;
-           table[1] = longDegrees + " " + longMinutes + " " + longSeconds;
-
-           var context = new dsimpsonEntities8();
-           var location = context.locations.Where(x => x.longitude == table[1] && x.latitude.ToString() == table[0]).ToList();
-        if(location.Count > 0)
-           {
-               return null;
-           }
-           else
-           {
-               var newLocation = new location();
-               newLocation.longitude = table[1];
-               newLocation.latitude = table[0];
-               context.locations.Add(newLocation);
-               context.SaveChanges();
-
-               return null;
-            } 
-        }
+        
 
         [Authorize]
         public ActionResult getLocations()
@@ -185,8 +99,8 @@ namespace csce361project1145.Controllers
             }),
                   JsonRequestBehavior.AllowGet);
         }
-        
 
+        [Authorize]
         [System.Web.Services.WebMethod]
         public ActionResult getPictures(String locationId)
         {
@@ -305,7 +219,7 @@ namespace csce361project1145.Controllers
             return View("ViewMap");
         }
 
-
+        [Authorize]
         [System.Web.Services.WebMethod]
         public ActionResult getPhotoByUser(String userId)
         {
@@ -326,6 +240,7 @@ namespace csce361project1145.Controllers
             JsonRequestBehavior.AllowGet);
         }
 
+        [Authorize]
         [System.Web.Services.WebMethod]
         public ActionResult getUserId()
         {
