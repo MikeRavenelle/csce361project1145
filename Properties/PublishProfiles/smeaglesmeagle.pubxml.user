@@ -22,10 +22,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/30/2014 19:14:02</publishTime>
     </File>
     <File Include="bin/csce361project1145.dll">
-      <publishTime>07/01/2014 11:23:18</publishTime>
+      <publishTime>07/01/2014 12:20:25</publishTime>
     </File>
     <File Include="bin/csce361project1145.pdb">
-      <publishTime>07/01/2014 11:23:18</publishTime>
+      <publishTime>07/01/2014 12:20:25</publishTime>
     </File>
     <File Include="bin/de/Microsoft.Data.Edm.resources.dll">
       <publishTime>06/18/2014 22:17:08</publishTime>

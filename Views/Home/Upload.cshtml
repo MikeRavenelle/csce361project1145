@@ -85,11 +85,11 @@
 
                 uint longMinutesNumerator = BitConverter.ToUInt32(propItems[43].Value, 8);
                 uint longMinutesDenominator = BitConverter.ToUInt32(propItems[43].Value, 12);
-                 longMinutes = ((float)longMinutesNumerator / (float)longMinutesDenominator)/60;
+                longMinutes = ((float)longMinutesNumerator / (float)longMinutesDenominator) / 60;
 
                 uint longSecondsNumerator = BitConverter.ToUInt32(propItems[43].Value, 16);
                 uint longSecondsDenominator = BitConverter.ToUInt32(propItems[43].Value, 20);
-                 longSeconds = ((float)longSecondsNumerator / (float)longSecondsDenominator)/3600;
+                longSeconds = ((float)longSecondsNumerator / (float)longSecondsDenominator) / 3600;
             }
             catch
             {
@@ -97,10 +97,13 @@
             }
 
 
-
+                var longSub = (longMinutes + longSeconds)/100;
+                var latSub = (latMinutes + latSeconds) / 100;
+        
             //table 0 is latitude; table 1 is longitude 
-            table[1] = latDegrees + "." + latMinutes.ToString().Replace(".", string.Empty) + latSeconds.ToString().Replace(".", string.Empty);
-           table[0] = longDegrees + "." + longMinutes.ToString().Replace(".", string.Empty) +longSeconds.ToString().Replace(".", string.Empty);
+            table[1] = latDegrees + "." + latSub.ToString().Replace(".", string.Empty);
+           table[0] = longDegrees + "." + longSub.ToString().Replace(".", string.Empty);
+        
            var tmplat = table[0];
            var tmplong = table[1];
 
