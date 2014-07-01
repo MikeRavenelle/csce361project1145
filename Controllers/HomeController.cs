@@ -38,9 +38,9 @@ namespace csce361project1145.Controllers
         public ActionResult UploadPhoto()
         {
             var test = new location();
-            var context = new dsimpsonEntities4();
-            test.latitude = 5;
-            test.longitude = 6;
+            var context = new dsimpsonEntities5();
+            test.latitude = "5";
+            test.longitude = "6";
             context.locations.Add(test);
             context.SaveChanges();
 
@@ -53,13 +53,13 @@ namespace csce361project1145.Controllers
         public ActionResult getLocations()
         {
 
-            var context = new dsimpsonEntities4();
+            var context = new dsimpsonEntities5();
             var locations = context.locations.ToList();
             //Where example:
            // var locations = context.locations.Where(x => x.locationId == 2).ToList();
             return Json(locations.Select(x => new
             {
-                id = x.locationId,
+                locationId = x.locationId,
                 longitude = x.longitude,
                 latitude = x.latitude
             }),
@@ -71,7 +71,7 @@ namespace csce361project1145.Controllers
         public ActionResult getLocationsById(String locationId)
         {
             var locationInt = Convert.ToInt32(locationId);
-            var context = new dsimpsonEntities4();
+            var context = new dsimpsonEntities5();
 
             var locations = context.locations.Where(x => x.locationId == locationInt).ToList();
                 
@@ -91,7 +91,7 @@ namespace csce361project1145.Controllers
         {
             var locationInt = Convert.ToInt32(locationId);
             System.Diagnostics.Debug.WriteLine(locationId);
-            var context = new dsimpsonEntities4();
+            var context = new dsimpsonEntities5();
             var pictures = context.pictures.Where(x => x.locationId == locationInt).ToList();
             //Where example:
             // var locations = context.locations.Where(x => x.locationId == 2).ToList();
@@ -110,7 +110,7 @@ namespace csce361project1145.Controllers
         public ActionResult getComments(String pictureId)
         {
             var pictureInt = Convert.ToInt32(pictureId);
-            var context = new dsimpsonEntities4();
+            var context = new dsimpsonEntities5();
             var comments = context.comments.Where(x => x.pictureId == pictureInt).ToList();
             //Where example:
             // var locations = context.locations.Where(x => x.locationId == 2).ToList();
@@ -129,14 +129,14 @@ namespace csce361project1145.Controllers
         public ActionResult getUser(String userId)
         {
             var userInt = Convert.ToInt32(userId);
-            var context = new dsimpsonEntities4();
+            var context = new dsimpsonEntities5();
             var users = context.users.Where(x => x.userId == userInt).ToList();
             //Where example:
             // var locations = context.locations.Where(x => x.locationId == 2).ToList();
             return Json(users.Select(x => new
             {
                 firstName = x.firstName,
-                lastName = x.LastName
+                lastName = x.lastName
 
             }),
                   JsonRequestBehavior.AllowGet);
@@ -146,7 +146,7 @@ namespace csce361project1145.Controllers
         public ActionResult addComment(String userId, String pictureId, String commentText)
         {
             var comment = new comment();
-            var context = new dsimpsonEntities4();
+            var context = new dsimpsonEntities5();
 
             comment.userId = Convert.ToInt32(userId);
             comment.pictureId = Convert.ToInt32(pictureId);
@@ -161,7 +161,7 @@ namespace csce361project1145.Controllers
         public ActionResult removeComment(String commentId)
         {
             
-            var context = new dsimpsonEntities4();
+            var context = new dsimpsonEntities5();
             var commentInt = Convert.ToInt32(commentId);
             var comment = context.comments.Where(x => x.commentId == commentInt).ToList();
             context.comments.Remove(comment[0]);
@@ -174,7 +174,7 @@ namespace csce361project1145.Controllers
         public ActionResult removePicture(String pictureId, String locationId)
         {
 
-            var context = new dsimpsonEntities4();
+            var context = new dsimpsonEntities5();
             var pictureInt = Convert.ToInt32(pictureId);
             var locationInt = Convert.ToInt32(locationId);
 
@@ -203,7 +203,7 @@ namespace csce361project1145.Controllers
         [System.Web.Services.WebMethod]
         public ActionResult getUserId(String userName)
         {
-            var context = new dsimpsonEntities4();
+            var context = new dsimpsonEntities5();
             var users = context.users.Where(x => x.userName == userName).ToList();
             
             return Json(users.Select(x => new
@@ -218,7 +218,7 @@ namespace csce361project1145.Controllers
         [System.Web.Services.WebMethod]
         public ActionResult getPhotoByUser(String userId)
         {
-            var context = new dsimpsonEntities4();
+            var context = new dsimpsonEntities5();
             var userInt = Convert.ToInt32(userId);
 
             var photos = context.pictures.Where(x => x.userId == userInt).ToList();

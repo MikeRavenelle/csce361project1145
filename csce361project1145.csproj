@@ -184,39 +184,39 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Models\comment.cs">
-      <DependentUpon>csce361Models.tt</DependentUpon>
+      <DependentUpon>cse361.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Models\csce361Models.Context.cs">
+    <Compile Include="Models\cse361.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>csce361Models.Context.tt</DependentUpon>
+      <DependentUpon>cse361.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\csce361Models.cs">
+    <Compile Include="Models\cse361.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>csce361Models.tt</DependentUpon>
+      <DependentUpon>cse361.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\csce361Models.Designer.cs">
+    <Compile Include="Models\cse361.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>csce361Models.edmx</DependentUpon>
+      <DependentUpon>cse361.edmx</DependentUpon>
     </Compile>
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\location.cs">
-      <DependentUpon>csce361Models.tt</DependentUpon>
+      <DependentUpon>cse361.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\picture.cs">
-      <DependentUpon>csce361Models.tt</DependentUpon>
+      <DependentUpon>cse361.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\user.cs">
-      <DependentUpon>csce361Models.tt</DependentUpon>
+      <DependentUpon>cse361.tt</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -278,22 +278,22 @@
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <EntityDeploy Include="Models\csce361Models.edmx">
+    <EntityDeploy Include="Models\cse361.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>csce361Models.Designer.cs</LastGenOutput>
+      <LastGenOutput>cse361.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <Content Include="Models\csce361Models.Context.tt">
+    <Content Include="Models\cse361.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>csce361Models.edmx</DependentUpon>
-      <LastGenOutput>csce361Models.Context.cs</LastGenOutput>
+      <DependentUpon>cse361.edmx</DependentUpon>
+      <LastGenOutput>cse361.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\csce361Models.edmx.diagram">
-      <DependentUpon>csce361Models.edmx</DependentUpon>
+    <Content Include="Models\cse361.edmx.diagram">
+      <DependentUpon>cse361.edmx</DependentUpon>
     </Content>
-    <Content Include="Models\csce361Models.tt">
+    <Content Include="Models\cse361.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>csce361Models.edmx</DependentUpon>
-      <LastGenOutput>csce361Models.cs</LastGenOutput>
+      <DependentUpon>cse361.edmx</DependentUpon>
+      <LastGenOutput>cse361.cs</LastGenOutput>
     </Content>
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
