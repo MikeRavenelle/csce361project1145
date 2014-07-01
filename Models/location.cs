@@ -20,8 +20,8 @@ namespace csce361project1145.Models
         }
     
         public int locationId { get; set; }
-        public Nullable<double> longitude { get; set; }
-        public Nullable<double> latitude { get; set; }
+        public string longitude { get; set; }
+        public string latitude { get; set; }
     
         public virtual ICollection<picture> pictures { get; set; }
     }

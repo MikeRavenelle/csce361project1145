@@ -7,37 +7,145 @@
 @using Microsoft.Web.Helpers
 @using System.Drawing
 @using csce361project1145.Models;
+@using csce361project1145.Controllers;
+@using System.Drawing.Imaging;
+@using System.Text;
+@using System.Data.Entity.Validation;
+@using System.Diagnostics;
+@using System.Data.Entity;
 
-@{
+@{  
     var fileName = "";
     var fileLocation = "";
-    var pictureId = 0;
 
     if (IsPost)
     {
         var uploadedFile = Request.Files[0];
-        if(uploadedFile.GetExtension == ".jpg" || uploadedFile.GetExtension == ".jpeg")
-        {
         fileName = Path.GetFileName(uploadedFile.FileName); 
         fileLocation = Server.MapPath("~/Content/Upload/" + User.Identity.Name + fileName);
         uploadedFile.SaveAs(fileLocation);
         var picture = new picture();
-        var context = new dsimpsonEntities4();
+        var context = new dsimpsonEntities8();
         picture.url = fileLocation;
-        picture.userId = Session['userId'];
+        picture.userId = Convert.ToInt32(Request.Cookies["userId"].Value);
         picture.caption = "Default Caption!";
-        picture.locationId = home.extractLocation(uploadedFile);
+        var image = new Bitmap(uploadedFile.InputStream);
+        PropertyItem[] propItems = image.PropertyItems;
+        int locationId;
+
+            
+            ASCIIEncoding encodings = new ASCIIEncoding();
+            string latRef ="0";
+            String[] table = new String[2];
+            table[0] = " ";
+            table[1] = " ";
+            float latDegrees = 0;
+            float latMinutes = 0;
+            float latSeconds = 0;
+            float longDegrees = 0;
+            float longMinutes = 0;
+            float longSeconds = 0;
+            try
+            {
+                //latitude Ref prop[40]
+
+                latRef = encodings.GetString(propItems[40].Value);
+
+                
+                //Latitude 
+                uint latDegreesNumerator = BitConverter.ToUInt32(propItems[41].Value, 0);
+                uint latDegreesDenominator = BitConverter.ToUInt32(propItems[41].Value, 4);
+                 latDegrees = latDegreesNumerator / (float)latDegreesDenominator;
+
+                uint latMinutesNumerator = BitConverter.ToUInt32(propItems[41].Value, 8);
+                uint latMinutesDenominator = BitConverter.ToUInt32(propItems[41].Value, 12);
+                 latMinutes = latMinutesNumerator / (float)latMinutesDenominator;
+
+                uint latSecondsNumerator = BitConverter.ToUInt32(propItems[41].Value, 16);
+                uint latSecondsDenominator = BitConverter.ToUInt32(propItems[41].Value, 20);
+                 latSeconds = latSecondsNumerator / (float)latSecondsDenominator;
+
+            }
+            catch
+            {
+                Console.WriteLine("Error in latitude ");
+            }
+             
+            try
+            {
+                //Longitude Ref prop[42]
+                string longRef = encodings.GetString(propItems[42].Value);
+
+           //longitude 
+                uint longDegreesNumerator = BitConverter.ToUInt32(propItems[43].Value, 0);
+                uint longDegreesDenominator = BitConverter.ToUInt32(propItems[43].Value, 4);
+                 longDegrees = longDegreesNumerator / (float)longDegreesDenominator;
+
+                uint longMinutesNumerator = BitConverter.ToUInt32(propItems[43].Value, 8);
+                uint longMinutesDenominator = BitConverter.ToUInt32(propItems[43].Value, 12);
+                 longMinutes = longMinutesNumerator / (float)longMinutesDenominator;
+
+                uint longSecondsNumerator = BitConverter.ToUInt32(propItems[43].Value, 16);
+                uint longSecondsDenominator = BitConverter.ToUInt32(propItems[43].Value, 20);
+                 longSeconds = longSecondsNumerator / (float)longSecondsDenominator;
+            }
+            catch
+            {
+                Console.WriteLine("Error in longitude");
+            }
+
+
+
+            //table 0 is latitude; table 1 is longitude 
+            table[1] = latDegrees + "." + latMinutes.ToString().Replace(".", string.Empty) + latSeconds.ToString().Replace(".", string.Empty);
+           table[0] = longDegrees + "." + longMinutes.ToString().Replace(".", string.Empty) +longSeconds.ToString().Replace(".", string.Empty);
+           var tmplat = table[0];
+           var tmplong = table[1];
+
+
+           var location = context.locations.Where(x => x.longitude.Equals(tmplong)).Where(x => x.latitude.Equals(tmplat)).ToList();
+        if(location.Count > 0)
+           {
+               locationId = location[0].locationId;
+           }
+           else
+           {
+               var newLocation = new location();
+               newLocation.longitude = table[1];
+               newLocation.latitude = table[0];
+               context.locations.Add(newLocation);
+               context.SaveChanges();
+               locationId = newLocation.locationId;
+
+           }
+        picture.locationId = locationId;
         context.pictures.Add(picture);
+        try
+        {
         context.SaveChanges();
         }
-        else
+        catch (DbEntityValidationException dbEx)
         {
-        <script>
+            foreach (var validationErrors in dbEx.EntityValidationErrors)
+            {
+                foreach (var validationError in validationErrors.ValidationErrors)
+                {
+                    Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                }
+            }
+        }
+       
+
+        }
+        
+       
+
+        /*<script>
         window.alert("Please only upload jpeg/jpgs!");
         window.location.assign(@Url.Action("Upload", "home"));
         </script> 
             
-        }
+        }*/
         
     }
 }

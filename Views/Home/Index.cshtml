@@ -12,7 +12,7 @@
                async: false,
                success: function (response) {
                    userId = response[0]['userId'];
-                   localStorage.setItem("userId", userId);
+                   document.cookie = 'userId=' + userId + '';
                }
            });
 
