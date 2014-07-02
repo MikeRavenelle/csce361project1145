@@ -42,7 +42,7 @@ function addComment(userId, pictureId) {
 
         }
     });
-    //window.location.reload()
+    window.location.reload()
 }
 
 

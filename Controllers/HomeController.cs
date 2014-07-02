@@ -121,6 +121,28 @@ namespace csce361project1145.Controllers
                   JsonRequestBehavior.AllowGet);
         }
 
+
+        [Authorize]
+        [System.Web.Services.WebMethod]
+        public ActionResult getPictureById(String pictureId)
+        {
+            var pictureInt = Convert.ToInt32(pictureId);
+            var context = new dsimpsonEntities8();
+            var pictures = context.pictures.Where(x => x.pictureId == pictureInt).ToList();
+
+            return Json(pictures.Select(x => new
+            {
+                userId = x.userId,
+                pictureId = x.pictureId,
+                locationId = x.locationId,
+                url = x.url,
+                caption = x.caption
+            }),
+                  JsonRequestBehavior.AllowGet);
+        }
+
+
+
         [Authorize]
         [System.Web.Services.WebMethod]
         public ActionResult getComments(String pictureId)
@@ -128,8 +150,7 @@ namespace csce361project1145.Controllers
             var pictureInt = Convert.ToInt32(pictureId);
             var context = new dsimpsonEntities8();
             var comments = context.comments.Where(x => x.pictureId == pictureInt).ToList();
-            //Where example:
-            // var locations = context.locations.Where(x => x.locationId == 2).ToList();
+            
             return Json(comments.Select(x => new
             {
                 commentId = x.commentId,
@@ -140,6 +161,26 @@ namespace csce361project1145.Controllers
             }),
                   JsonRequestBehavior.AllowGet);
         }
+
+        [Authorize]
+        [System.Web.Services.WebMethod]
+        public ActionResult getCommentsByUser(String userId)
+        {
+            var userInt = Convert.ToInt32(userId);
+            var context = new dsimpsonEntities8();
+            var comments = context.comments.Where(x => x.userId == userInt).ToList();
+           
+            return Json(comments.Select(x => new
+            {
+                commentId = x.commentId,
+                commentText = x.commentText,
+                userId = x.userId,
+                pictureId = x.pictureId
+
+            }),
+                  JsonRequestBehavior.AllowGet);
+        }
+
 
         [Authorize]
         [System.Web.Services.WebMethod]
@@ -273,7 +314,21 @@ namespace csce361project1145.Controllers
 
         }
 
+        [Authorize]
+        [System.Web.Services.WebMethod]
+        public ActionResult getUserByUserName(String userName)
+        {
+            var context = new dsimpsonEntities8();
+            var users = context.users.Where(x => x.userName == userName).ToList();
+            
+            return Json(users.Select(x => new
+            {
+                userId = x.userId
 
+            }),
+
+            JsonRequestBehavior.AllowGet);
+        }
 
     }
 
