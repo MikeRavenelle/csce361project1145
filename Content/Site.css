@@ -58,3 +58,18 @@
     color: crimson;
 
 }
+
+ body 
+ {
+            background-image: url("../../Content/Images/red backgrounds gradient red background 1920x1200 wallpaper_wallpaperswa.com_33.jpg");
+				 -webkit-background-size: cover;
+  				-moz-background-size: cover;
+                -o-background-size: cover;
+                background-size: cover;
+}
+
+ .social {
+     margin-top: 10%;
+     text-align: center;
+ }
+
