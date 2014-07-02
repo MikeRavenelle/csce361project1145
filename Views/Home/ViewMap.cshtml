@@ -92,11 +92,27 @@
                     for(var j = 0; j<campusPictures.length; ++j)
                     {
                         campusPic = campusPictures[j];
-                        contentString += '<div id="div' + campusPic['pictureId'] + '">';
+
+                        var userId = campusPic['userId'];
+                        var ajaxUserData = { userId: userId };
+                        $.ajax({
+                            url: '@Url.RouteUrl("getuser")',
+                            data: ajaxUserData,
+                            dataType: 'json',
+                            type: "POST",
+                            async: false,
+                            success: function (response) {
+                                users = response;
+                            }
+                        });
+
+                        user = users[0];
+
+                        contentString += '<div id="div' + campusPic['pictureId'] + '">' + user['userName'];
                         if (campusPic['userId'] == getId() ) {
-                            contentString += '<button type="button" onclick="deletePicture(' + campusPic['pictureId'] + ', ' + campusPic['locationId'] + ')">Remove Image</button>';
+                            contentString += '<button type="button" class="delete" onclick="deletePicture(' + campusPic['pictureId'] + ', ' + campusPic['locationId'] + ')">Remove Image</button>';
                         }
-                        contentString += '<img height="200px" width="400px"src="' + campusPic['url'] + '" alt="Smiley face">'
+                        contentString += '<br/><img height="200px" width="400px"src="' + campusPic['url'] + '" alt="Smiley face">'
                                + '<div class="caption">' + campusPic['caption'] + '</div>';
                        
                         //Get all comments for the current picture from HomeController.getComments via

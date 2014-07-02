@@ -73,17 +73,30 @@
                     for (var j = 0; j < pictures.length; ++j)
                     {
                         picture = pictures[j];
-                        
-
 
                         if (picture['locationId'] == currentLocation['locationId']) {
 
-                            contentString += '<div id="div' + picture['pictureId'] + '">';
+                            var userId = picture['userId'];
+                            var ajaxUserData = { userId: userId };
+                            $.ajax({
+                                url: '@Url.RouteUrl("getuser")',
+                                data: ajaxUserData,
+                                dataType: 'json',
+                                type: "POST",
+                                async: false,
+                                success: function (response) {
+                                    users = response;
+                                }
+                            });
+
+                            user = users[0];
+
+                            contentString += '<div id="div' + picture['pictureId'] + '">' + user['userName'];
                             if (picture['userId'] == getId()) {
-                                contentString += '<button type="button" onclick="deletePicture(' + picture['pictureId'] + ', ' + picture['locationId'] + ')">Remove Image</button>';
+                                contentString += '<button type="button" class="delete" onclick="deletePicture(' + picture['pictureId'] + ', ' + picture['locationId'] + ')">Remove Image</button>';
                             }
 
-                            contentString += '<img height="200px" width="400px"src="' + picture['url'] + '" alt="Bad Image">'
+                            contentString += '<br/><img height="200px" width="400px"src="' + picture['url'] + '" alt="Bad Image">'
                                + '<div class="caption">' + picture['caption'] + '</div>';
 
                             //Get all comments for the current picture from HomeController.getComments via
@@ -120,7 +133,7 @@
                                 });
 
                                 user = users[0];
-                                contentString += '<tr><td class="infoWindow_user">' + user['userName'] + ": " + '</td>' +
+                                contentString += '<tr id="' + comment['commentId'] + '"><td class="infoWindow_user">' + user['userName'] + ": " + '</td>' +
                                                  '<td class="infoWindow_comment">' + '<div>' + comment['commentText'] + '</div> </td>';
                                 if (comment['userId'] == getId() ) {
                                     contentString += '<td><button type="button" onclick="deleteComment(' + comment['commentId'] + ')">Remove</button></td>';
@@ -320,8 +333,6 @@
     {
         document.getElementById("photoText").disabled = true;
         document.getElementById("commentText").disabled = true;
-        document.getElementById("latText").disabled = false;
-        document.getElementById("longText").disabled = false;
         document.getElementById("range").disabled = false;
 
         var mapOptions = {
@@ -354,84 +365,82 @@
 
     function searchByRadius()
     {
-        /*var mapOptions = {
-            zoom: 17,
-            center: new google.maps.LatLng(40.8204419, -96.7005872),
-            mapTypeId: google.maps.MapTypeId.SATELLITE
+        var range = document.getElementById("range");
+
+        if (range.value == "" || isNaN(range.value)) {
+            alert("Please enter a valid range");
+            range.select();
         }
-        var map = new google.maps.Map(document.getElementById('map-canvas'),
-                            mapOptions);*/
+        else {
+            var lat = document.getElementById("latText").value;
 
-        
-
-        var map = show_map();
-
-        //Get all locations stored in Databaase
-        $.ajax({
-            url: '@Url.RouteUrl("getdata")',
-            dataType: 'json',
-            async: false,
-            success: function (response) {
-                campusPlaces = response;
+            if (lat == "") {
+                alert("Please select a point at the center of the radius you would like to search.");
             }
-        });
+            else {
+                var map = show_map();
 
-        var latitude = document.getElementById("latText").value;
-        var longitude = document.getElementById("longText").value;
-
-
-        var latLngFrom = new google.maps.LatLng(latitude, longitude);
-        var locationsList = [];
-        var pictureList = [];
-        for(var c = 0; c< campusPlaces.length; ++c)
-        {
-            var currentSpot = campusPlaces[c];
-
-            var latTo = currentSpot['latitude'].toString();
-            var longTo = currentSpot['longitude'].toString();
-
-           var latLngTo = new google.maps.LatLng(longTo, latTo);
-
-            var range = document.getElementById("range").value;
-            if (google.maps.geometry.spherical.computeDistanceBetween(latLngFrom, latLngTo) < range)
-            {
-                locationsList.push(currentSpot);
-                
-                var locationId = currentSpot['locationId'];
-                var ajaxData = { locationId: locationId };
+                //Get all locations stored in Databaase
                 $.ajax({
-                    url: '@Url.RouteUrl("getPics")',
-                    data: ajaxData,
+                    url: '@Url.RouteUrl("getdata")',
                     dataType: 'json',
-                    type: "POST",
                     async: false,
                     success: function (response) {
-                        for(var i = 0; i<response.length; ++i)
-                        {
-                            pictureList.push(response[i]);
-                        }
+                        campusPlaces = response;
                     }
                 });
-            }
-        }
 
-        addMarkers(locationsList, pictureList, map);
+                var latitude = document.getElementById("latText").value;
+                var longitude = document.getElementById("longText").value;
+
+
+                var latLngFrom = new google.maps.LatLng(latitude, longitude);
+                var locationsList = [];
+                var pictureList = [];
+                for (var c = 0; c < campusPlaces.length; ++c) {
+                    var currentSpot = campusPlaces[c];
+
+                    var latTo = currentSpot['latitude'].toString();
+                    var longTo = currentSpot['longitude'].toString();
+
+                    var latLngTo = new google.maps.LatLng(longTo, latTo);
+
+                    var range = document.getElementById("range").value;
+                    if (google.maps.geometry.spherical.computeDistanceBetween(latLngFrom, latLngTo) < range) {
+                        locationsList.push(currentSpot);
+
+                        var locationId = currentSpot['locationId'];
+                        var ajaxData = { locationId: locationId };
+                        $.ajax({
+                            url: '@Url.RouteUrl("getPics")',
+                            data: ajaxData,
+                            dataType: 'json',
+                            type: "POST",
+                            async: false,
+                            success: function (response) {
+                                for (var i = 0; i < response.length; ++i) {
+                                    pictureList.push(response[i]);
+                                }
+                            }
+                        });
+                    }
+                }
+
+                addMarkers(locationsList, pictureList, map);
+            }
+        }       
     }
     
     function enable_photo()
     {
         document.getElementById("photoText").disabled = false;
         document.getElementById("commentText").disabled = true;
-        document.getElementById("latText").disabled = true;
-        document.getElementById("longText").disabled = true;
         document.getElementById("range").disabled = true;
 
     }
     function enable_comment() {
         document.getElementById("photoText").disabled = true;
         document.getElementById("commentText").disabled = false;
-        document.getElementById("latText").disabled = true;
-        document.getElementById("longText").disabled = true;
         document.getElementById("range").disabled = true;
 
     }
