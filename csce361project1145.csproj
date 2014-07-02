@@ -229,7 +229,9 @@
     </Content>
     <Content Include="Content\Images\Kauffman.jpg" />
     <Content Include="Content\Images\nMarker.png" />
+    <Content Include="Content\Images\red backgrounds gradient red background 1920x1200 wallpaper_wallpaperswa.com_33.jpg" />
     <Content Include="Content\Images\signInWithTwitterButton.png" />
+    <Content Include="Content\Images\UNL.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
