@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="59e3aaefb171447eafb2ac2c09f90f70" Name="Diagram1">
+        <EntityTypeShape EntityType="dsimpsonModel.comment" Width="1.5" PointX="3" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="dsimpsonModel.location" Width="1.5" PointX="3.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="dsimpsonModel.picture" Width="1.5" PointX="6" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="dsimpsonModel.user" Width="1.5" PointX="0.75" PointY="3.5" IsExpanded="true" />
+        <AssociationConnector Association="dsimpsonModel.comments_ibfk_1" ManuallyRouted="false" />
+        <AssociationConnector Association="dsimpsonModel.comments_ibfk_2" ManuallyRouted="false" />
+        <AssociationConnector Association="dsimpsonModel.pictures_ibfk_2" ManuallyRouted="false" />
+        <AssociationConnector Association="dsimpsonModel.pictures_ibfk_1" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -12,81 +12,8 @@
 
 
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+<script src="../../Scripts/pictureMaintenance.js"></script>
 <script>
-
-    //Add a comment from view page
-    function addComment(userId, pictureId) {
-
-        var commentText = document.getElementById(pictureId).value;
-
-        var ajaxData = { userId: userId, pictureId: pictureId, commentText: commentText };
-        $.ajax({
-            url: '@Url.RouteUrl("addComment")',
-            data: ajaxData,
-            dataType: 'json',
-            type: "POST",
-            async: false,
-            success: function () {
-                
-            }
-        });
-        window.location.reload()
-    }
-
-    //Delete a comment from view page
-    function deleteComment(commentId) {
-        
-        var confirm = window.confirm("Please click okay to confirm the removal of your comment");
-
-        if (confirm == true) {
-
-
-            var ajaxData = { commentId: commentId };
-            $.ajax({
-                url: '@Url.RouteUrl("removeComment")',
-                data: ajaxData,
-                dataType: 'json',
-                type: "POST",
-                async: false,
-                success: function () {
-
-                }
-            });
-
-            window.location.reload()
-           
-        } 
-
-
-    }
-
-    //Delete an image, it's comments, and the location if it is the only image from view page
-    function deletePicture(pictureId, locationId) {
-
-        var confirm = window.confirm("Please click okay to confirm the removal of your image and all of its comments");
-
-        if (confirm == true) {
-
-            
-            var ajaxData = { pictureId: pictureId, locationId: locationId };
-            $.ajax({
-                url: '@Url.RouteUrl("removePicture")',
-                data: ajaxData,
-                dataType: 'json',
-                type: "POST",
-                async: false,
-                success: function () {
-
-                }
-            });
-
-            window.location.reload()
-
-        }
-
-
-    }
-
 
     // Call to HomeController.getLocations via getdata Route to get locations
     $(document).ready(function () {
@@ -99,6 +26,12 @@
             }
         });
     });
+            //get specific cookie
+             function getId() {
+                var regExp = new RegExp("userId" + "=([^;]+)");
+                var value = regExp.exec(document.cookie);
+                return (value != null) ? unescape(value[1]) : null;
+             }
    
         //Create the map via google maps api zoomed into UNL City Campus
         function initialize() {
@@ -122,7 +55,7 @@
 
                 var campusSpot = points[i];
                 var location = new google.maps.LatLng(campusSpot['longitude'], campusSpot['latitude']);
-                var locationId = campusSpot['id'].toString();
+                var locationId = campusSpot['locationId'].toString();
                 var name = campusSpot[0];
                 var image = "../../Content/Images/nMarker.png";
 
@@ -159,9 +92,9 @@
                     for(var j = 0; j<campusPictures.length; ++j)
                     {
                         campusPic = campusPictures[j];
-
-                        if (campusPic['userId'] == 3) {
-                            contentString += '<button type="button" onclick="deletePicture(' + campusPic['pictureId'] + ', ' + campusPic['locationId'] + ')">Remov Image</button>';
+                        contentString += '<div id="div' + campusPic['pictureId'] + '">';
+                        if (campusPic['userId'] == getId() ) {
+                            contentString += '<button type="button" onclick="deletePicture(' + campusPic['pictureId'] + ', ' + campusPic['locationId'] + ')">Remove Image</button>';
                         }
                         contentString += '<img height="200px" width="400px"src="' + campusPic['url'] + '" alt="Smiley face">'
                                + '<div class="caption">' + campusPic['caption'] + '</div>';
@@ -200,9 +133,9 @@
                             });
                            
                             user = users[0];
-                            contentString += '<tr><td class="infoWindow_user">' + user['firstName'] + " " + user['lastName'] + ": " + '</td>' +
+                            contentString += '<tr id="' + comment['commentId'] + '"><td class="infoWindow_user">' + user['userName'] + ": " + '</td>' +
                                              '<td class="infoWindow_comment">' + '<div>' + comment['commentText'] + '</div> </td>';
-                            if (comment['userId'] == 3)
+                            if (comment['userId'] == getId())
                             {
                                contentString += '<td><button type="button" onclick="deleteComment(' + comment['commentId'] + ')">Remove</button></td>';
                             }
@@ -211,7 +144,8 @@
                                            
                         }
                         
-                        contentString += '</table><input type="text" id="' + pictureId +  '"><button type="button" onclick="addComment(' + 3 + ', ' + pictureId + ')">Post Comment!</button>';
+                        contentString += '</table><input type="text" id="' + pictureId + '"><button type="button" onclick="addComment(' + getId() + ', ' + pictureId + ')">Post Comment!</button>';
+                        contentString += '</div>';
                         var test;
                     }
                     infowindow.setContent(contentString);

@@ -3,9 +3,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<input type="radio" id="photo" name="search" />Photo <input type="text" id="photoText" /><br />
-<input type="radio" id="comment" name="search" />Comment<br />
-<input type="radio" id="radius" name="search" />Radius
+<input type="radio" checked ="checked"  id="photo" name="search" onclick="enable_photo()"/>Photo <input type="text" id="photoText" /><br />
+<input type="radio" id="comment" name="search" onclick="enable_comment()" />Comment <input disabled type="text" id="commentText" /><br />
+<input type="radio" id="radius" name="search" onclick="show_map()"/>Radius Latitude: <input disabled type="text" id="latText" /> Longitude <input disabled type="text" id="longText" /> Range <input disabled type="text" id="range" /> Feet
 <input type="button" onclick="evaluate_search()" value="Search"/>
 
 <input type="button" id="Button2" onclick="window.location.href='@Url.Action("ViewMap","home")'"
@@ -13,8 +13,9 @@
 
 <div id="map-canvas" class="map"></div>
 
-
+<script src="../../Scripts/pictureMaintenance.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=geometry&sensor=false&language=en"></script>
 
 
 <script type="text/javascript">
@@ -22,15 +23,27 @@
     function evaluate_search()
     {
         
-        if (document.getElementById("photo").checked == true) {   
+        if (document.getElementById("photo").checked) {   
             searchByUserName();
         }
 
-        if (document.getElementById("comment").checked == true) {
+        if (document.getElementById("comment").checked) {
             searchComments();
         }
 
+        if(document.getElementById("radius").checked)
+        {
+            searchByRadius();
+        }
+
         
+    }
+
+    //get specific cookie
+    function getId() {
+        var regExp = new RegExp("userId" + "=([^;]+)");
+        var value = regExp.exec(document.cookie);
+        return (value != null) ? unescape(value[1]) : null;
     }
 
     
@@ -40,9 +53,11 @@
         for (var l = 0; l < locationList.length; ++l) {
             var currentLocation = locationList[l];
             var latLng = new google.maps.LatLng(currentLocation['longitude'], currentLocation['latitude']);
+            var image = "../../Content/Images/nMarker.png";
             var searchMarker = new google.maps.Marker({
                 position: latLng,
-                map: map
+                map: map,
+                icon: image
             });
             var infowindow = new google.maps.InfoWindow({});
             google.maps.event.addListener(searchMarker, 'click',
@@ -58,8 +73,16 @@
                     for (var j = 0; j < pictures.length; ++j)
                     {
                         picture = pictures[j];
+                        
+
 
                         if (picture['locationId'] == currentLocation['locationId']) {
+
+                            contentString += '<div id="div' + picture['pictureId'] + '">';
+                            if (picture['userId'] == getId()) {
+                                contentString += '<button type="button" onclick="deletePicture(' + picture['pictureId'] + ', ' + picture['locationId'] + ')">Remove Image</button>';
+                            }
+
                             contentString += '<img height="200px" width="400px"src="' + picture['url'] + '" alt="Bad Image">'
                                + '<div class="caption">' + picture['caption'] + '</div>';
 
@@ -97,9 +120,9 @@
                                 });
 
                                 user = users[0];
-                                contentString += '<tr><td class="infoWindow_user">' + user['firstName'] + " " + user['lastName'] + ": " + '</td>' +
+                                contentString += '<tr><td class="infoWindow_user">' + user['userName'] + ": " + '</td>' +
                                                  '<td class="infoWindow_comment">' + '<div>' + comment['commentText'] + '</div> </td>';
-                                if (comment['userId'] == 3) {
+                                if (comment['userId'] == getId() ) {
                                     contentString += '<td><button type="button" onclick="deleteComment(' + comment['commentId'] + ')">Remove</button></td>';
                                 }
 
@@ -107,6 +130,7 @@
                             }
 
                             contentString += '</table><input type="text" id="' + pictureId + '"><button type="button" onclick="addComment(' + 3 + ', ' + pictureId + ')">Post Comment!</button>';
+                            contentString += '</div>';
                             var test;
                         }
                     }
@@ -118,78 +142,108 @@
         }
     }
 
-    //Add a comment from view page
-    function addComment(userId, pictureId) {
 
-        var commentText = document.getElementById(pictureId).value;
 
-        var ajaxData = { userId: userId, pictureId: pictureId, commentText: commentText };
+    function searchComments()
+    {
+
+        var mapOptions = {
+            zoom: 17,
+            center: new google.maps.LatLng(40.8204419, -96.7005872),
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+        }
+        var map = new google.maps.Map(document.getElementById('map-canvas'),
+                            mapOptions);
+
+        var userName = document.getElementById("commentText").value;
+
+        var ajaxData = { userName: userName };
+
         $.ajax({
-            url: '@Url.RouteUrl("addComment")',
+            url: '@Url.RouteUrl("getUserByUserName")',
             data: ajaxData,
             dataType: 'json',
             type: "POST",
             async: false,
-            success: function () {
-
+            success: function (response) {
+                users = response;
             }
         });
-        window.location.reload()
-    }
 
-    //Delete a comment from view page
-    function deleteComment(commentId) {
+        user = users[0];
+        var userId = user['userId'];
 
-        var confirm = window.confirm("Please click okay to confirm the removal of your comment");
+        //Get all comments for the user from HomeController.getComments via
+        //   getcommentsByUser route
+        var ajaxCommentData = { userId: userId };
+        $.ajax({
+            url: '@Url.RouteUrl("getCommentsByUser")',
+            data: ajaxCommentData,
+            dataType: 'json',
+            type: "POST",
+            async: false,
+            success: function (response) {
+                comments = response;
+            }
+        });
 
-        if (confirm == true) {
+        var picIdList = [];
+        var locIdList = [];
 
+        var picDataList = [];
+        var locDataList = [];
 
-            var ajaxData = { commentId: commentId };
-            $.ajax({
-                url: '@Url.RouteUrl("removeComment")',
-                data: ajaxData,
-                dataType: 'json',
-                type: "POST",
-                async: false,
-                success: function () {
+        for( var c = 0; c<comments.length; ++c)
+        {
+            var curComment = comments[c];
+            var pictureId = curComment['pictureId'];
+            if(picIdList.indexOf(pictureId) == -1)
+            {
+                picIdList.push(pictureId);
+                //Get the unique picture tied to the current comment
+                var ajaxPictureData = { pictureId: pictureId };
+                $.ajax({
+                    url: '@Url.RouteUrl("getPictureById")',
+                    data: ajaxPictureData,
+                    dataType: 'json',
+                    type: "POST",
+                    async: false,
+                    success: function (response) {
+                        picture = response
+                        var curPicture = picture[0];
 
-                }
-            });
+                        picDataList.push(curPicture);
 
-            window.location.reload()
+                        var locationId = curPicture['locationId'];
 
+                        //Get the location tied to the current image
+                        if(locIdList.indexOf(locationId) == -1)
+                        {
+                            locIdList.push(locationId)
+                            var ajaxLocationData = { locationId: locationId };
+                            $.ajax({
+                                url: '@Url.RouteUrl("getLocationsById")',
+                                data: ajaxLocationData,
+                                dataType: 'json',
+                                type: "POST",
+                                async: false,
+                                success: function (response) {
+                                    curLocation = response
+                                    locDataList.push(curLocation[0] );
+                                }
+                            });
+
+                        }
+                    }
+                });
+
+            }
         }
 
-
+        addMarkers(locDataList, picDataList, map)
     }
 
-    //Delete an image, it's comments, and the location if it is the only image from view page
-    function deletePicture(pictureId, locationId) {
-
-        var confirm = window.confirm("Please click okay to confirm the removal of your image and all of its comments");
-
-        if (confirm == true) {
-
-
-            var ajaxData = { pictureId: pictureId, locationId: locationId };
-            $.ajax({
-                url: '@Url.RouteUrl("removePicture")',
-                data: ajaxData,
-                dataType: 'json',
-                type: "POST",
-                async: false,
-                success: function () {
-
-                }
-            });
-
-            window.location.reload()
-
-        }
-
-
-    }
+    
 
     function searchByUserName()
     {
@@ -206,7 +260,7 @@
         var ajaxData = { userName: userName };
 
         $.ajax({
-            url: '@Url.RouteUrl("getUserId")',
+            url: '@Url.RouteUrl("getUserByUserName")',
             data: ajaxData,
             dataType: 'json',
             type: "POST",
@@ -261,5 +315,125 @@
 
         addMarkers(locationsList, pictures, map)
     }
+
+    function show_map()
+    {
+        document.getElementById("photoText").disabled = true;
+        document.getElementById("commentText").disabled = true;
+        document.getElementById("latText").disabled = false;
+        document.getElementById("longText").disabled = false;
+        document.getElementById("range").disabled = false;
+
+        var mapOptions = {
+            zoom: 17,
+            center: new google.maps.LatLng(40.8204419, -96.7005872),
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+        }
+        var map = new google.maps.Map(document.getElementById('map-canvas'),
+                            mapOptions);
+
+        google.maps.event.addListener(map, 'click', function (clickedLocation) {
+            setPin(clickedLocation.latLng, map);
+        });
+
+        return map;
+
+    }
+
+    function setPin(position, map)
+    {
+        var marker = new google.maps.Marker({
+            position: position,
+            map: map
+        });
+
+        document.getElementById("latText").value = position.lat();
+        document.getElementById("longText").value = position.lng();
+
+    }
+
+    function searchByRadius()
+    {
+        /*var mapOptions = {
+            zoom: 17,
+            center: new google.maps.LatLng(40.8204419, -96.7005872),
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+        }
+        var map = new google.maps.Map(document.getElementById('map-canvas'),
+                            mapOptions);*/
+
+        
+
+        var map = show_map();
+
+        //Get all locations stored in Databaase
+        $.ajax({
+            url: '@Url.RouteUrl("getdata")',
+            dataType: 'json',
+            async: false,
+            success: function (response) {
+                campusPlaces = response;
+            }
+        });
+
+        var latitude = document.getElementById("latText").value;
+        var longitude = document.getElementById("longText").value;
+
+
+        var latLngFrom = new google.maps.LatLng(latitude, longitude);
+        var locationsList = [];
+        var pictureList = [];
+        for(var c = 0; c< campusPlaces.length; ++c)
+        {
+            var currentSpot = campusPlaces[c];
+
+            var latTo = currentSpot['latitude'].toString();
+            var longTo = currentSpot['longitude'].toString();
+
+           var latLngTo = new google.maps.LatLng(longTo, latTo);
+
+            var range = document.getElementById("range").value;
+            if (google.maps.geometry.spherical.computeDistanceBetween(latLngFrom, latLngTo) < range)
+            {
+                locationsList.push(currentSpot);
+                
+                var locationId = currentSpot['locationId'];
+                var ajaxData = { locationId: locationId };
+                $.ajax({
+                    url: '@Url.RouteUrl("getPics")',
+                    data: ajaxData,
+                    dataType: 'json',
+                    type: "POST",
+                    async: false,
+                    success: function (response) {
+                        for(var i = 0; i<response.length; ++i)
+                        {
+                            pictureList.push(response[i]);
+                        }
+                    }
+                });
+            }
+        }
+
+        addMarkers(locationsList, pictureList, map);
+    }
     
+    function enable_photo()
+    {
+        document.getElementById("photoText").disabled = false;
+        document.getElementById("commentText").disabled = true;
+        document.getElementById("latText").disabled = true;
+        document.getElementById("longText").disabled = true;
+        document.getElementById("range").disabled = true;
+
+    }
+    function enable_comment() {
+        document.getElementById("photoText").disabled = true;
+        document.getElementById("commentText").disabled = false;
+        document.getElementById("latText").disabled = true;
+        document.getElementById("longText").disabled = true;
+        document.getElementById("range").disabled = true;
+
+    }
+
 </script>

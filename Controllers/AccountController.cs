@@ -52,6 +52,7 @@ namespace csce361project1145.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
+            Response.Cookies["userId"].Expires = DateTime.Now.AddDays(-1);
             WebSecurity.Logout();
 
             return RedirectToAction("Index", "Home");

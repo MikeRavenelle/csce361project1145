@@ -6,6 +6,16 @@
    @if (Request.IsAuthenticated)
    {
        <script>
+           $.ajax({
+               url: '@Url.RouteUrl("getUserId")',
+               dataType: 'json',
+               async: false,
+               success: function (response) {
+                   userId = response[0]['userId'];
+                   document.cookie = 'userId=' + userId + '';
+               }
+           });
+
            window.location.href = "@Url.Action("ViewMap", "home")";
     </script>
 

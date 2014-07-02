@@ -23,7 +23,7 @@ namespace csce361project1145.Models
         public int userId { get; set; }
         public string userName { get; set; }
         public string firstName { get; set; }
-        public string LastName { get; set; }
+        public string lastName { get; set; }
     
         public virtual ICollection<comment> comments { get; set; }
         public virtual ICollection<picture> pictures { get; set; }
