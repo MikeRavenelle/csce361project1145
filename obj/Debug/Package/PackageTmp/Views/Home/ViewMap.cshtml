@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>ViewMap</h2>
+<p style="font-family: 'Segoe Script'; font-size: 18pt; color: white; text-align: center;"> ViewMap</p>
 <div id="map-canvas" class="map"></div>
 <input type="button" id="Button1" onclick="window.location.href='@Url.Action("Search","home")'"
         value="Search" />
@@ -133,7 +133,7 @@
                             });
                            
                             user = users[0];
-                            contentString += '<tr><td class="infoWindow_user">' + user['userName'] + ": " + '</td>' +
+                            contentString += '<tr id="' + comment['commentId'] + '"><td class="infoWindow_user">' + user['userName'] + ": " + '</td>' +
                                              '<td class="infoWindow_comment">' + '<div>' + comment['commentText'] + '</div> </td>';
                             if (comment['userId'] == getId())
                             {

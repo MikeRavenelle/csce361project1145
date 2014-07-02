@@ -4,14 +4,12 @@
     ViewBag.Title = "Log in";
 }
 
-<hgroup class="title">
-  <!--  <h1>@ViewBag.Title.</h1> -->
-</hgroup>
-
 
 <section class="social" id="socialLoginForm">
-   <!-- <h2>Please use Twitter!</h2> -->
+    <img src="~/Content/Images/UNL.png" width="300"/>
+    <p style="font-family: 'Segoe Script'; font-size: 36pt; color: white;"> <b>Campus Photo Viewer</b></p>
     @Html.Action("ExternalLoginsList", new { ReturnUrl = ViewBag.ReturnUrl })
+    <p style="font-family: 'Segoe Script'; font-size: 18pt; color: white;"> <b>Share The Campus Experience</b></p> 
 </section>
 
 @section Scripts {
