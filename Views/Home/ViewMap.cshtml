@@ -133,7 +133,7 @@
                             });
                            
                             user = users[0];
-                            contentString += '<tr><td class="infoWindow_user">' + user['userName'] + ": " + '</td>' +
+                            contentString += '<tr id="' + comment['commentId'] + '"><td class="infoWindow_user">' + user['userName'] + ": " + '</td>' +
                                              '<td class="infoWindow_comment">' + '<div>' + comment['commentText'] + '</div> </td>';
                             if (comment['userId'] == getId())
                             {

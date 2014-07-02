@@ -26,6 +26,13 @@ namespace csce361project1145
             );
 
             routes.MapRoute(
+                name: "getUserByUserName",
+                url: "getUserByUserName",
+                defaults: new { controller = "Home", action = "getUserByUserName" }
+            );
+
+
+            routes.MapRoute(
                name: "getPhotoByUser",
                url: "getPhotoByUser",
                defaults: new { controller = "Home", action = "getPhotoByUser" }
@@ -68,9 +75,23 @@ namespace csce361project1145
             );
 
             routes.MapRoute(
+                name: "getPictureById",
+                url: "getPictureById",
+                defaults: new { controller = "Home", action = "getPictureById" }
+            );
+
+            
+
+            routes.MapRoute(
                 name: "getComments",
                 url: "getComments",
                 defaults: new { controller = "Home", action = "getComments" }
+            );
+
+            routes.MapRoute(
+                name: "getCommentsByUser",
+                url: "getCommentsByUser",
+                defaults: new { controller = "Home", action = "getCommentsByUser" }
             );
 
             routes.MapRoute(
