@@ -68,8 +68,22 @@
                 background-size: cover;
 }
 
+ p {
+      font-family: 'Segoe Script'; 
+      font-size: 18pt; 
+      color: white; 
+      text-align: center;
+ }
+
  .social {
      margin-top: 10%;
      text-align: center;
  }
 
+.file-upload-buttons {
+display: inline-block;
+}
+
+.file-upload {
+    display: inline-block;
+}
