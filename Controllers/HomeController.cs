@@ -223,8 +223,12 @@ namespace csce361project1145.Controllers
             var context = new dsimpsonEntities8();
             var commentInt = Convert.ToInt32(commentId);
             var comment = context.comments.Where(x => x.commentId == commentInt).ToList();
-            context.comments.Remove(comment[0]);
-            context.SaveChanges();
+            if(comment.Count > 0)
+            {
+                context.comments.Remove(comment[0]);
+                context.SaveChanges();
+            }
+            
 
             return View("ViewMap");
         }
@@ -246,15 +250,23 @@ namespace csce361project1145.Controllers
             context.SaveChanges();
 
             var picture = context.pictures.Where(x => x.pictureId == pictureInt).ToList();
-            context.pictures.Remove(picture[0]);
-            context.SaveChanges();
+            if(picture.Count > 0)
+            {
+                context.pictures.Remove(picture[0]);
+                context.SaveChanges();
+            }
+            
 
             picture = context.pictures.Where(x => x.locationId == locationInt).ToList();
             if (picture.Count == 0)
             {
                 var location = context.locations.Where(x => x.locationId == locationInt).ToList();
-                context.locations.Remove(location[0]);
-                context.SaveChanges();
+                if(location.Count > 0)
+                {
+                    context.locations.Remove(location[0]);
+                    context.SaveChanges();
+                }
+                
             }
 
             return View("ViewMap");
