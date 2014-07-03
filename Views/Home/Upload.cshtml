@@ -39,6 +39,8 @@
                 var image = new Bitmap(uploadedFile.InputStream);
                 PropertyItem[] propItems = image.PropertyItems;
                 int locationId;
+                int longSign = 1;
+                int latSign = 1;
 
 
                 ASCIIEncoding encodings = new ASCIIEncoding();
@@ -100,7 +102,19 @@
 
                 }
 
-                var location = context.locations.Where(x => x.longitude.Equals(decimalLongitude)).Where(x => x.latitude.Equals(decimalLatitude)).ToList();
+                if (string.Compare(latRef,"S") == 0) {
+                    decimalLatitude = decimalLatitude * -1;
+                }
+
+                if (string.Compare(longRef, "W") == 0)
+                {
+                    decimalLongitude = decimalLongitude * -1;
+                }
+                
+                string tmpLatitude = decimalLongitude.ToString();
+                string tmpLongitude = decimalLatitude.ToString();
+
+                var location = context.locations.Where(x => x.longitude.Equals(tmpLongitude)).Where(x => x.latitude.Equals(tmpLatitude)).ToList();
                 if (location.Count > 0)
                 {
                     locationId = location[0].locationId;
@@ -108,8 +122,8 @@
                 else
                 {
                     var newLocation = new location();
-                    newLocation.longitude = decimalLongitude.ToString();
-                    newLocation.latitude = decimalLatitude.ToString();
+                    newLocation.longitude = tmpLongitude;
+                    newLocation.latitude = tmpLatitude;
                     context.locations.Add(newLocation);
                     context.SaveChanges();
                     locationId = newLocation.locationId;
