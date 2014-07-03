@@ -43,77 +43,64 @@
 
                 ASCIIEncoding encodings = new ASCIIEncoding();
                 string latRef = "0";
-                String[] table = new String[2];
-                table[0] = " ";
-                table[1] = " ";
-                double latDegrees = 0;
-                double latMinutes = 0;
-                double latSeconds = 0;
-                double longDegrees = 0;
-                double longMinutes = 0;
-                double longSeconds = 0;
-                try
+                string longRef = "0";
+                double decimalLatitude = 0;
+                double decimalLongitude = 0;
+                
+                
+                foreach(PropertyItem item in propItems)
                 {
-                    //latitude Ref prop[40]
 
-                    latRef = encodings.GetString(propItems[40].Value);
+                    if(item.Id.ToString("x")=="1"){
+
+                    latRef = encodings.GetString(item.Value);
+                    }
 
 
-                    //Latitude
-                    uint latDegreesNumerator = BitConverter.ToUInt32(propItems[41].Value, 0);
-                    uint latDegreesDenominator = BitConverter.ToUInt32(propItems[41].Value, 4);
-                    latDegrees = (double)latDegreesNumerator / (double)latDegreesDenominator;
+                    if(item.Id.ToString("x")=="2"){
 
-                    uint latMinutesNumerator = BitConverter.ToUInt32(propItems[41].Value, 8);
-                    uint latMinutesDenominator = BitConverter.ToUInt32(propItems[41].Value, 12);
-                    latMinutes = ((double)latMinutesNumerator / (double)latMinutesDenominator) / 60;
+                        uint degreesNumerator = BitConverter.ToUInt32(item.Value, 0);
+                        uint degreesDenominator = BitConverter.ToUInt32(item.Value, 4);
+                        double degrees = degreesNumerator / (double)degreesDenominator;
 
-                    uint latSecondsNumerator = BitConverter.ToUInt32(propItems[41].Value, 16);
-                    uint latSecondsDenominator = BitConverter.ToUInt32(propItems[41].Value, 20);
-                    latSeconds = ((double)latSecondsNumerator / (double)latSecondsDenominator) / 3600;
+                        uint minutesNumerator = BitConverter.ToUInt32(item.Value, 8);
+                        uint minutesDenominator = BitConverter.ToUInt32(item.Value, 12);
+                        double minutes = minutesNumerator / (double)minutesDenominator;
+
+                        uint secondsNumerator = BitConverter.ToUInt32(item.Value, 16);
+                        uint secondsDenominator = BitConverter.ToUInt32(item.Value, 20);
+                        double seconds = secondsNumerator / (double)secondsDenominator;
+
+                        decimalLatitude = degrees + (minutes / 60) + (seconds / 3600);
+                         
+                     }
+                    
+                    if(item.Id.ToString("x")=="3"){
+                    longRef = encodings.GetString(item.Value);
+                    }
+
+                    if (item.Id.ToString("x") == "4")
+                    {
+                        uint degreesNumerator = BitConverter.ToUInt32(item.Value, 0);
+                        uint degreesDenominator = BitConverter.ToUInt32(item.Value, 4);
+                        double degrees = degreesNumerator / (double)degreesDenominator;
+
+
+                        uint minutesNumerator = BitConverter.ToUInt32(item.Value, 8);
+                        uint minutesDenominator = BitConverter.ToUInt32(item.Value, 12);
+                        double minutes = minutesNumerator / (double)minutesDenominator;
+
+                        uint secondsNumerator = BitConverter.ToUInt32(item.Value, 16);
+                        uint secondsDenominator = BitConverter.ToUInt32(item.Value, 20);
+                        double seconds = secondsNumerator / (double)secondsDenominator;
+
+                        decimalLongitude = degrees + (minutes / 60) + (seconds / 3600);
+                    }
+
 
                 }
-                catch
-                {
-                    Console.WriteLine("Error in latitude ");
-                }
 
-                try
-                {
-                    //Longitude Ref prop[42]
-                    string longRef = encodings.GetString(propItems[42].Value);
-
-                    //longitude
-                    uint longDegreesNumerator = BitConverter.ToUInt32(propItems[43].Value, 0);
-                    uint longDegreesDenominator = BitConverter.ToUInt32(propItems[43].Value, 4);
-                    longDegrees = -1 * (double)longDegreesNumerator / (double)longDegreesDenominator;
-
-                    uint longMinutesNumerator = BitConverter.ToUInt32(propItems[43].Value, 8);
-                    uint longMinutesDenominator = BitConverter.ToUInt32(propItems[43].Value, 12);
-                    longMinutes = ((double)longMinutesNumerator / (double)longMinutesDenominator) / 60;
-
-                    uint longSecondsNumerator = BitConverter.ToUInt32(propItems[43].Value, 16);
-                    uint longSecondsDenominator = BitConverter.ToUInt32(propItems[43].Value, 20);
-                    longSeconds = ((double)longSecondsNumerator / (double)longSecondsDenominator) / 3600;
-                }
-                catch
-                {
-                    Console.WriteLine("Error in longitude");
-                }
-
-
-                var longSub = (longMinutes + longSeconds) * 10;
-                var latSub = (latMinutes + latSeconds) * 10;
-
-                //table 0 is latitude; table 1 is longitude
-                table[1] = latDegrees + "." + latSub.ToString().Replace(".", string.Empty);
-                table[0] = longDegrees + "." + longSub.ToString().Replace(".", string.Empty);
-
-                var tmplat = table[0];
-                var tmplong = table[1];
-
-
-                var location = context.locations.Where(x => x.longitude.Equals(tmplong)).Where(x => x.latitude.Equals(tmplat)).ToList();
+                var location = context.locations.Where(x => x.longitude.Equals(decimalLongitude)).Where(x => x.latitude.Equals(decimalLatitude)).ToList();
                 if (location.Count > 0)
                 {
                     locationId = location[0].locationId;
@@ -121,8 +108,8 @@
                 else
                 {
                     var newLocation = new location();
-                    newLocation.longitude = table[1];
-                    newLocation.latitude = table[0];
+                    newLocation.longitude = decimalLongitude.ToString();
+                    newLocation.latitude = decimalLatitude.ToString();
                     context.locations.Add(newLocation);
                     context.SaveChanges();
                     locationId = newLocation.locationId;
