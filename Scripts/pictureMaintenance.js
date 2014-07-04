@@ -28,6 +28,24 @@ function deleteComment(commentId) {
 function addComment(userId, pictureId) {
 
     var commentText = document.getElementById(pictureId).value;
+    document.getElementById(pictureId).value = "";
+
+    var ajaxUserData = { userId: userId };
+    $.ajax({
+        url: 'getuser',
+        data: ajaxUserData,
+        dataType: 'json',
+        type: "POST",
+        async: false,
+        success: function (response) {
+            users = response;
+        }
+    });
+
+    user = users[0];
+
+    var userName = user['userName'];
+
 
     var ajaxData = { userId: userId, pictureId: pictureId, commentText: commentText };
     $.ajax({
@@ -36,13 +54,20 @@ function addComment(userId, pictureId) {
         dataType: 'json',
         type: "POST",
         async: false,
-        success: function () {
-
-            infowindow.open(map, campusMarker);
+        success: function (response) {
+            comment = response;
+            curComment = comment[0];
 
         }
     });
-    window.location.reload()
+
+    var contentString = '<tr id="' + curComment['commentId'] + '"><td class="infoWindow_user">' + userName + ": " + '</td>' +
+                                                '<td class="infoWindow_comment">' + '<div>' + commentText + '</div> </td>';
+        contentString += '<td><button type="button" onclick="deleteComment(' + curComment['commentId'] + ')">Remove</button></td>';
+
+
+    $('#table' + pictureId).append(contentString);
+
 }
 
 

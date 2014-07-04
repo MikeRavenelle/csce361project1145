@@ -212,7 +212,15 @@ namespace csce361project1145.Controllers
             context.comments.Add(comment);
             context.SaveChanges();
 
-            return View("ViewMap");
+            context.Entry(comment).GetDatabaseValues();
+
+            return Json(context.comments.Select(x => new
+            {
+                commentId = x.commentId
+
+            }),
+                  JsonRequestBehavior.AllowGet);
+            
         }
 
         [Authorize]
