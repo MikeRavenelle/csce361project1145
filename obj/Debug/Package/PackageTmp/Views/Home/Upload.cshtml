@@ -1,0 +1,217 @@
+﻿@{
+    ViewBag.Title = "Upload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using Microsoft.Web.Helpers
+@using System.Drawing
+@using csce361project1145.Models;
+@using csce361project1145.Controllers;
+@using System.Drawing.Imaging;
+@using System.Text;
+@using System.Data.Entity.Validation;
+@using System.Diagnostics;
+@using System.Data.Entity;
+
+@{
+    var fileName = "";
+    var fileLocation = "";
+
+    if (IsPost)
+    {
+        var uploadedFile = Request.Files[0];
+        if (uploadedFile.ContentLength > 0)
+        {
+
+            var extension = Path.GetExtension(uploadedFile.FileName);
+            if (string.Equals(extension, ".jpeg", StringComparison.OrdinalIgnoreCase) || string.Equals(extension, ".jpg", StringComparison.OrdinalIgnoreCase)
+)
+            {
+                var date = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                fileName = Path.GetFileName(uploadedFile.FileName);
+                fileLocation = Server.MapPath("~/Content/Upload/" + User.Identity.Name + date + fileName);
+                uploadedFile.SaveAs(fileLocation);
+                var serverFileLocation = "../../Content/Upload/" + User.Identity.Name + date + fileName;
+                var picture = new picture();
+                var context = new dsimpsonEntities8();
+                picture.url = serverFileLocation;
+                picture.userId = Convert.ToInt32(Request.Cookies["userId"].Value);
+                picture.caption = Request.Form["caption"];
+                var image = new Bitmap(uploadedFile.InputStream);
+                PropertyItem[] propItems = image.PropertyItems;
+                int locationId;
+                int longSign = 1;
+                int latSign = 1;
+
+
+                ASCIIEncoding encodings = new ASCIIEncoding();
+                string latRef = "0";
+                string longRef = "0";
+                double decimalLatitude = 0;
+                double decimalLongitude = 0;
+                
+                
+                foreach(PropertyItem item in propItems)
+                {
+
+                    if(item.Id.ToString("x")=="1"){
+
+                    latRef = encodings.GetString(item.Value);
+                    }
+
+
+                    if(item.Id.ToString("x")=="2"){
+
+                        uint degreesNumerator = BitConverter.ToUInt32(item.Value, 0);
+                        uint degreesDenominator = BitConverter.ToUInt32(item.Value, 4);
+                        double degrees = degreesNumerator / (double)degreesDenominator;
+
+                        uint minutesNumerator = BitConverter.ToUInt32(item.Value, 8);
+                        uint minutesDenominator = BitConverter.ToUInt32(item.Value, 12);
+                        double minutes = minutesNumerator / (double)minutesDenominator;
+
+                        uint secondsNumerator = BitConverter.ToUInt32(item.Value, 16);
+                        uint secondsDenominator = BitConverter.ToUInt32(item.Value, 20);
+                        double seconds = secondsNumerator / (double)secondsDenominator;
+
+                        decimalLatitude = degrees + (minutes / 60) + (seconds / 3600);
+                         
+                     }
+                    
+                    if(item.Id.ToString("x")=="3"){
+                    longRef = encodings.GetString(item.Value);
+                    }
+
+                    if (item.Id.ToString("x") == "4")
+                    {
+                        uint degreesNumerator = BitConverter.ToUInt32(item.Value, 0);
+                        uint degreesDenominator = BitConverter.ToUInt32(item.Value, 4);
+                        double degrees = degreesNumerator / (double)degreesDenominator;
+
+
+                        uint minutesNumerator = BitConverter.ToUInt32(item.Value, 8);
+                        uint minutesDenominator = BitConverter.ToUInt32(item.Value, 12);
+                        double minutes = minutesNumerator / (double)minutesDenominator;
+
+                        uint secondsNumerator = BitConverter.ToUInt32(item.Value, 16);
+                        uint secondsDenominator = BitConverter.ToUInt32(item.Value, 20);
+                        double seconds = secondsNumerator / (double)secondsDenominator;
+
+                        decimalLongitude = degrees + (minutes / 60) + (seconds / 3600);
+                    }
+
+
+                }
+
+                if (string.Compare(latRef,"S") == 0) {
+                    decimalLatitude = decimalLatitude * -1;
+                }
+
+                if (string.Compare(longRef, "W") == 0)
+                {
+                    decimalLongitude = decimalLongitude * -1;
+                }
+
+                if (decimalLongitude == 0 && decimalLatitude == 0)
+                {
+                    decimalLatitude = 40.819040240051244;
+                    decimalLongitude = -96.69993951916695;
+                }
+                
+                string tmpLatitude = decimalLongitude.ToString();
+                string tmpLongitude = decimalLatitude.ToString();
+
+                var location = context.locations.Where(x => x.longitude.Equals(tmpLongitude)).Where(x => x.latitude.Equals(tmpLatitude)).ToList();
+                if (location.Count > 0)
+                {
+                    locationId = location[0].locationId;
+                }
+                else
+                {
+                    var newLocation = new location();
+                    newLocation.longitude = tmpLongitude;
+                    newLocation.latitude = tmpLatitude;
+                    context.locations.Add(newLocation);
+                    context.SaveChanges();
+                    locationId = newLocation.locationId;
+
+                }
+                picture.locationId = locationId;
+                context.pictures.Add(picture);
+                try
+                {
+                    context.SaveChanges();
+                    <script> window.location.href = "@Url.Action("ViewMap", "home")";</script>
+                }
+                catch (DbEntityValidationException dbEx)
+                {
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                        }
+                    }
+                }
+
+
+
+
+            }
+            else
+            {
+                <script>
+                    window.alert("Please upload only JPG/JPEG!");
+                    location.reload();
+                </script>
+            }
+
+
+
+        }
+        else
+        {
+            <script>
+                window.alert("Please select a file to upload!");
+                location.reload();
+            </script>
+
+        }
+
+
+    }
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload your picture!</title>
+</head>
+<body>
+
+
+
+    <form id="myForm" method="post"
+          enctype="multipart/form-data"
+          action="">
+        <div>
+            <h1><p>File Upload</p></h1>
+            <center>
+            @if (!IsPost)
+            {
+                @FileUpload.GetHtml(
+        initialNumberOfFiles: 1,
+        allowMoreFilesToBeAdded: false,
+        includeFormTag: true,
+        uploadText: "Upload");
+            }
+            <br />
+         <p>Caption:</p>@Html.TextBox("caption", "", new { placeholder = "Please enter a caption!", @maxlength = "150", @autocomplete = "off" })</center>
+
+        </div>
+    </form>
+
+
+
+</body>
+</html>

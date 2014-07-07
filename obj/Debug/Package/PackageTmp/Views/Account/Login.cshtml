@@ -1,0 +1,17 @@
+﻿@model csce361project1145.Models.LoginModel
+
+@{
+    ViewBag.Title = "Log in";
+}
+
+
+<section class="social" id="socialLoginForm">
+    <img src="~/Content/Images/UNL.png" width="300"/>
+    <p style="font-family: 'Segoe Script'; font-size: 36pt; color: white;"> <b>Campus Photo Viewer</b></p>
+    @Html.Action("ExternalLoginsList", new { ReturnUrl = ViewBag.ReturnUrl })
+    <p style="font-family: 'Segoe Script'; font-size: 18pt; color: white;"> <b>Share The Campus Experience</b></p> 
+</section>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

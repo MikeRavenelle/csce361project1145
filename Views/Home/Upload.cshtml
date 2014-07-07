@@ -110,6 +110,12 @@
                 {
                     decimalLongitude = decimalLongitude * -1;
                 }
+
+                if (decimalLongitude == 0 && decimalLatitude == 0)
+                {
+                    decimalLatitude = 40.819040240051244;
+                    decimalLongitude = -96.69993951916695;
+                }
                 
                 string tmpLatitude = decimalLongitude.ToString();
                 string tmpLongitude = decimalLatitude.ToString();

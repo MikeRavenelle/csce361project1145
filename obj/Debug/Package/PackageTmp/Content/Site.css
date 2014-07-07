@@ -1,0 +1,89 @@
+/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error
+{
+    color: #ff0000;
+}
+
+.field-validation-valid
+{
+    display: none;
+}
+
+.input-validation-error
+{
+    border: 1px solid #ff0000;
+    background-color: #ffeeee;
+}
+
+.validation-summary-errors
+{
+    font-weight: bold;
+    color: #ff0000;
+}
+
+.validation-summary-valid
+{
+    display: none;
+}
+
+#map-canvas
+{
+    width: 1000px;
+    height: 600px;
+}
+
+.infoWindow_table
+{
+    width: 375px;
+    background-color: gray;
+    border: solid;
+    border-color: black;
+}
+
+.infoWindow_user
+{
+    width: 100px;
+    font-weight: bold;
+    border-bottom: solid;
+    border-color: darkgray;
+}
+
+.infoWindow_comment
+{
+    border-width: thin;
+    border-bottom: solid;
+    border-color: darkgray;
+    width: 260px;
+    color: crimson;
+
+}
+
+ body 
+ {
+            background-image: url("../../Content/Images/red backgrounds gradient red background 1920x1200 wallpaper_wallpaperswa.com_33.jpg");
+				 -webkit-background-size: cover;
+  				-moz-background-size: cover;
+                -o-background-size: cover;
+                background-size: cover;
+}
+
+ p {
+      font-family: 'Segoe Script'; 
+      font-size: 18pt; 
+      color: white; 
+      text-align: center;
+ }
+
+ .social {
+     margin-top: 10%;
+     text-align: center;
+ }
+
+.file-upload-buttons {
+display: inline-block;
+}
+
+.file-upload {
+    display: inline-block;
+}

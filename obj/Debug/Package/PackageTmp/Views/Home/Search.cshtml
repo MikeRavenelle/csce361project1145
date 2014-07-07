@@ -1,0 +1,448 @@
+﻿@{
+    ViewBag.Title = "Search";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<input type="radio" checked ="checked"  id="photo" name="search" onclick="enable_photo()"/>Photo <input type="text" id="photoText" /><br />
+<input type="radio" id="comment" name="search" onclick="enable_comment()" />Comment <input disabled type="text" id="commentText" /><br />
+<input type="radio" id="radius" name="search" onclick="show_map()"/>Radius Latitude: <input disabled type="text" id="latText" /> Longitude <input disabled type="text" id="longText" /> Range <input disabled type="text" id="range" /> Feet
+<input type="button" onclick="evaluate_search()" value="Search"/>
+
+<input type="button" id="Button2" onclick="window.location.href='@Url.Action("ViewMap","home")'"
+       value="View Map" />
+
+<div id="map-canvas" class="map"></div>
+
+<script src="../../Scripts/pictureMaintenance.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=geometry&sensor=false&language=en"></script>
+
+
+<script type="text/javascript">
+    //Determine what kind of search is requested
+    function evaluate_search()
+    {
+        
+        if (document.getElementById("photo").checked) {   
+            searchByUserName();
+        }
+
+        if (document.getElementById("comment").checked) {
+            searchComments();
+        }
+
+        if(document.getElementById("radius").checked)
+        {
+            searchByRadius();
+        }
+
+        
+    }
+
+    //get specific cookie
+    function getId() {
+        var regExp = new RegExp("userId" + "=([^;]+)");
+        var value = regExp.exec(document.cookie);
+        return (value != null) ? unescape(value[1]) : null;
+    }
+
+    
+    function addMarkers (locationList, pictures, map)
+    {
+        
+        for (var l = 0; l < locationList.length; ++l) {
+            var currentLocation = locationList[l];
+            var latLng = new google.maps.LatLng(currentLocation['longitude'], currentLocation['latitude']);
+            var image = "../../Content/Images/nMarker.png";
+            var searchMarker = new google.maps.Marker({
+                position: latLng,
+                map: map,
+                icon: image
+            });
+            var infowindow = new google.maps.InfoWindow({});
+            google.maps.event.addListener(searchMarker, 'click',
+
+               //Get all of the pictures at the current location 
+               //      Call to HomeController.getPictures via getPics route
+                function (infowindow, searchMarker) {
+                    
+                    // String of HTML that is concatenated as pictureURL, caption, user, comment, 
+                    //   are retrieved to be used in infoWindow
+                    var contentString = "";
+
+                    for (var j = 0; j < pictures.length; ++j)
+                    {
+                        picture = pictures[j];
+
+                        if (picture['locationId'] == currentLocation['locationId']) {
+
+                            var userId = picture['userId'];
+                            var ajaxUserData = { userId: userId };
+                            $.ajax({
+                                url: '@Url.RouteUrl("getuser")',
+                                data: ajaxUserData,
+                                dataType: 'json',
+                                type: "POST",
+                                async: false,
+                                success: function (response) {
+                                    users = response;
+                                }
+                            });
+
+                            user = users[0];
+
+                            contentString += '<div id="div' + picture['pictureId'] + '">' + user['userName'];
+                            if (picture['userId'] == getId()) {
+                                contentString += '<button type="button" class="delete" onclick="deletePicture(' + picture['pictureId'] + ', ' + picture['locationId'] + ')">Remove Image</button>';
+                            }
+
+                            contentString += '<br/><img height="200px" width="400px"src="' + picture['url'] + '" alt="Bad Image">'
+                               + '<div class="caption">' + picture['caption'] + '</div>';
+
+                            //Get all comments for the current picture from HomeController.getComments via
+                            //   getcomments route
+                            var pictureId = picture['pictureId'];
+                            var ajaxPictureData = { pictureId: pictureId };
+                            $.ajax({
+                                url: '@Url.RouteUrl("getcomments")',
+                                data: ajaxPictureData,
+                                dataType: 'json',
+                                type: "POST",
+                                async: false,
+                                success: function (response) {
+                                    comments = response;
+                                }
+                            });
+                            contentString += '<table class="infoWindow_table" id="table' + pictureId + '">';
+                            for (var c = 0; c < comments.length; ++c) {
+                                comment = comments[c];
+
+                                //Get the user that added the current comment from HomeController.getUser
+                                //  via getuser route
+                                var userId = comment['userId'];
+                                var ajaxUserData = { userId: userId };
+                                $.ajax({
+                                    url: '@Url.RouteUrl("getuser")',
+                                    data: ajaxUserData,
+                                    dataType: 'json',
+                                    type: "POST",
+                                    async: false,
+                                    success: function (response) {
+                                        users = response;
+                                    }
+                                });
+
+                                user = users[0];
+                                contentString += '<tr id="' + comment['commentId'] + '"><td class="infoWindow_user">' + user['userName'] + ": " + '</td>' +
+                                                 '<td class="infoWindow_comment">' + '<div>' + comment['commentText'] + '</div> </td>';
+                                if (comment['userId'] == getId() ) {
+                                    contentString += '<td><button type="button" onclick="deleteComment(' + comment['commentId'] + ')">Remove</button></td>';
+                                }
+
+                                contentString += '</tr>'
+                            }
+
+                            contentString += '</table><input type="text" id="' + pictureId + '"><button type="button" onclick="addComment(' + getId() + ', ' + pictureId + ')">Post Comment!</button>';
+                            contentString += '</div>';
+                            var test;
+                        }
+                    }
+                    infowindow.setContent(contentString);
+                    return function () {
+                        infowindow.open(map, searchMarker);
+                    };
+                }(infowindow, searchMarker) );
+        }
+    }
+
+
+
+    function searchComments()
+    {
+
+        var mapOptions = {
+            zoom: 17,
+            center: new google.maps.LatLng(40.8204419, -96.7005872),
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+        }
+        var map = new google.maps.Map(document.getElementById('map-canvas'),
+                            mapOptions);
+
+        var userName = document.getElementById("commentText").value;
+
+        var ajaxData = { userName: userName };
+
+        $.ajax({
+            url: '@Url.RouteUrl("getUserByUserName")',
+            data: ajaxData,
+            dataType: 'json',
+            type: "POST",
+            async: false,
+            success: function (response) {
+                users = response;
+            }
+        });
+
+        user = users[0];
+        var userId = user['userId'];
+
+        //Get all comments for the user from HomeController.getComments via
+        //   getcommentsByUser route
+        var ajaxCommentData = { userId: userId };
+        $.ajax({
+            url: '@Url.RouteUrl("getCommentsByUser")',
+            data: ajaxCommentData,
+            dataType: 'json',
+            type: "POST",
+            async: false,
+            success: function (response) {
+                comments = response;
+            }
+        });
+
+        var picIdList = [];
+        var locIdList = [];
+
+        var picDataList = [];
+        var locDataList = [];
+
+        for( var c = 0; c<comments.length; ++c)
+        {
+            var curComment = comments[c];
+            var pictureId = curComment['pictureId'];
+            if(picIdList.indexOf(pictureId) == -1)
+            {
+                picIdList.push(pictureId);
+                //Get the unique picture tied to the current comment
+                var ajaxPictureData = { pictureId: pictureId };
+                $.ajax({
+                    url: '@Url.RouteUrl("getPictureById")',
+                    data: ajaxPictureData,
+                    dataType: 'json',
+                    type: "POST",
+                    async: false,
+                    success: function (response) {
+                        picture = response
+                        var curPicture = picture[0];
+
+                        picDataList.push(curPicture);
+
+                        var locationId = curPicture['locationId'];
+
+                        //Get the location tied to the current image
+                        if(locIdList.indexOf(locationId) == -1)
+                        {
+                            locIdList.push(locationId)
+                            var ajaxLocationData = { locationId: locationId };
+                            $.ajax({
+                                url: '@Url.RouteUrl("getLocationsById")',
+                                data: ajaxLocationData,
+                                dataType: 'json',
+                                type: "POST",
+                                async: false,
+                                success: function (response) {
+                                    curLocation = response
+                                    locDataList.push(curLocation[0] );
+                                }
+                            });
+
+                        }
+                    }
+                });
+
+            }
+        }
+
+        addMarkers(locDataList, picDataList, map)
+    }
+
+    
+
+    function searchByUserName()
+    {
+        var mapOptions = {
+            zoom: 17,
+            center: new google.maps.LatLng(40.8204419, -96.7005872),
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+        }
+        var map = new google.maps.Map(document.getElementById('map-canvas'),
+                            mapOptions);
+
+        var userName = document.getElementById("photoText").value;
+
+        var ajaxData = { userName: userName };
+
+        $.ajax({
+            url: '@Url.RouteUrl("getUserByUserName")',
+            data: ajaxData,
+            dataType: 'json',
+            type: "POST",
+            async: false,
+            success: function (response) {
+                users = response;
+            }
+        });
+
+        user = users[0];
+        var userId = user['userId'];
+
+        //Get all photos of that user
+        var pictureData = { userId: userId };
+        var pictures = "";
+        $.ajax({
+            url: '@Url.RouteUrl("getPhotoByUser")',
+            data: pictureData,
+            dataType: 'json',
+            type: "POST",
+            async: false,
+            success: function (response) {
+                pictures = response;
+            }
+        });
+
+        var locationsList = []
+        var locationIdList = []
+        for (var i = 0; i < pictures.length; ++i) {
+
+            var picture = pictures[i];
+            var locationId = picture['locationId'];
+            if (locationIdList.indexOf(locationId) == -1) {
+                locationIdList.push(locationId);
+                //Get Unique locations
+                var locationData = { locationId: locationId };
+
+                $.ajax({
+                    url: '@Url.RouteUrl("getLocationsById")',
+                    data: locationData,
+                    dataType: 'json',
+                    type: "POST",
+                    async: false,
+                    success: function (response) {
+                        locations = response;
+                    }
+                });
+
+                locationsList.push(locations[0]);
+            }
+        }
+
+        addMarkers(locationsList, pictures, map)
+    }
+
+    function show_map()
+    {
+        document.getElementById("photoText").disabled = true;
+        document.getElementById("commentText").disabled = true;
+        document.getElementById("range").disabled = false;
+
+        var mapOptions = {
+            zoom: 17,
+            center: new google.maps.LatLng(40.8204419, -96.7005872),
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+        }
+        var map = new google.maps.Map(document.getElementById('map-canvas'),
+                            mapOptions);
+
+        google.maps.event.addListener(map, 'click', function (clickedLocation) {
+            setPin(clickedLocation.latLng, map);
+        });
+
+        return map;
+
+    }
+
+    function setPin(position, map)
+    {
+        var marker = new google.maps.Marker({
+            position: position,
+            map: map
+        });
+
+        document.getElementById("latText").value = position.lat();
+        document.getElementById("longText").value = position.lng();
+
+    }
+
+    function searchByRadius()
+    {
+        var range = document.getElementById("range");
+
+        if (range.value == "" || isNaN(range.value)) {
+            alert("Please enter a valid range");
+            range.select();
+        }
+        else {
+            var lat = document.getElementById("latText").value;
+
+            if (lat == "") {
+                alert("Please select a point at the center of the radius you would like to search.");
+            }
+            else {
+                var map = show_map();
+
+                //Get all locations stored in Databaase
+                $.ajax({
+                    url: '@Url.RouteUrl("getdata")',
+                    dataType: 'json',
+                    async: false,
+                    success: function (response) {
+                        campusPlaces = response;
+                    }
+                });
+
+                var latitude = document.getElementById("latText").value;
+                var longitude = document.getElementById("longText").value;
+
+
+                var latLngFrom = new google.maps.LatLng(latitude, longitude);
+                var locationsList = [];
+                var pictureList = [];
+                for (var c = 0; c < campusPlaces.length; ++c) {
+                    var currentSpot = campusPlaces[c];
+
+                    var latTo = currentSpot['latitude'].toString();
+                    var longTo = currentSpot['longitude'].toString();
+
+                    var latLngTo = new google.maps.LatLng(longTo, latTo);
+
+                    var range = document.getElementById("range").value;
+                    if (google.maps.geometry.spherical.computeDistanceBetween(latLngFrom, latLngTo) < range) {
+                        locationsList.push(currentSpot);
+
+                        var locationId = currentSpot['locationId'];
+                        var ajaxData = { locationId: locationId };
+                        $.ajax({
+                            url: '@Url.RouteUrl("getPics")',
+                            data: ajaxData,
+                            dataType: 'json',
+                            type: "POST",
+                            async: false,
+                            success: function (response) {
+                                for (var i = 0; i < response.length; ++i) {
+                                    pictureList.push(response[i]);
+                                }
+                            }
+                        });
+                    }
+                }
+
+                addMarkers(locationsList, pictureList, map);
+            }
+        }       
+    }
+    
+    function enable_photo()
+    {
+        document.getElementById("photoText").disabled = false;
+        document.getElementById("commentText").disabled = true;
+        document.getElementById("range").disabled = true;
+
+    }
+    function enable_comment() {
+        document.getElementById("photoText").disabled = true;
+        document.getElementById("commentText").disabled = false;
+        document.getElementById("range").disabled = true;
+
+    }
+
+</script>

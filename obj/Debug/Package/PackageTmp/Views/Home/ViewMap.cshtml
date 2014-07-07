@@ -1,0 +1,181 @@
+﻿@{
+    ViewBag.Title = "ViewMap";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<p> ViewMap</p>
+<div id="map-canvas" class="map"></div>
+<input type="button" id="Button1" onclick="window.location.href='@Url.Action("Search","home")'"
+        value="Search" />
+<input type="button" id="Button2" onclick="window.location.href='@Url.Action("Upload","home")'"
+        value="Upload" />
+
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+<script src="../../Scripts/pictureMaintenance.js"></script>
+<script>
+
+    // Call to HomeController.getLocations via getdata Route to get locations
+    $(document).ready(function () {
+        $.ajax({
+            url: '@Url.RouteUrl("getdata")',
+            dataType: 'json',
+            async: false ,
+            success: function (response) {
+                campusPlaces = response;
+            }
+        });
+    });
+            //get specific cookie
+             function getId() {
+                var regExp = new RegExp("userId" + "=([^;]+)");
+                var value = regExp.exec(document.cookie);
+                return (value != null) ? unescape(value[1]) : null;
+             }
+   
+        //Create the map via google maps api zoomed into UNL City Campus
+        function initialize() {
+            var mapOptions = {
+                zoom: 17,
+                center: new google.maps.LatLng(40.8204419, -96.7005872),
+                mapTypeId: google.maps.MapTypeId.SATELLITE
+            }
+            var map = new google.maps.Map(document.getElementById('map-canvas'),
+                                mapOptions);
+
+            addMarkers(map, campusPlaces);
+
+
+        }
+
+        //Add all of the Markers
+        function addMarkers(map, points) {
+
+            for (var i = 0; i < points.length; i++) {
+
+                var campusSpot = points[i];
+                var location = new google.maps.LatLng(campusSpot['longitude'], campusSpot['latitude']);
+                var locationId = campusSpot['locationId'].toString();
+                var name = campusSpot[0];
+                var image = "../../Content/Images/nMarker.png";
+
+                var infowindow = new google.maps.InfoWindow({});
+
+                var campusMarker = new google.maps.Marker({
+                    position: location,
+                    map: map,
+                    icon: image
+                    });
+                campusMarker.setTitle(locationId);
+                
+                google.maps.event.addListener(campusMarker, 'click',
+
+               //Get all of the pictures at the current location 
+               //      Call to HomeController.getPictures via getPics route
+                function (infowindow, campusMarker) {
+                    var ajaxData = { locationId: locationId };
+                    $.ajax({
+                        url: '@Url.RouteUrl("getPics")',
+                        data: ajaxData,
+                        dataType: 'json',
+                        type: "POST",
+                        async: false,
+                        success: function (response) {
+                            campusPictures = response;
+                        }
+                    });
+
+                    // String of HTML that is concatenated as pictureURL, caption, user, comment, 
+                    //   are retrieved to be used in infoWindow
+                    var contentString = "";
+                    
+                    for(var j = 0; j<campusPictures.length; ++j)
+                    {
+                        campusPic = campusPictures[j];
+
+                        var userId = campusPic['userId'];
+                        var ajaxUserData = { userId: userId };
+                        $.ajax({
+                            url: '@Url.RouteUrl("getuser")',
+                            data: ajaxUserData,
+                            dataType: 'json',
+                            type: "POST",
+                            async: false,
+                            success: function (response) {
+                                users = response;
+                            }
+                        });
+
+                        user = users[0];
+
+                        contentString += '<div id="div' + campusPic['pictureId'] + '">' + user['userName'];
+                        if (campusPic['userId'] == getId() ) {
+                            contentString += '<button type="button" class="delete" onclick="deletePicture(' + campusPic['pictureId'] + ', ' + campusPic['locationId'] + ')">Remove Image</button>';
+                        }
+                        contentString += '<br/><img height="200px" width="400px"src="' + campusPic['url'] + '" alt="Smiley face">'
+                               + '<div class="caption">' + campusPic['caption'] + '</div>';
+                       
+                        //Get all comments for the current picture from HomeController.getComments via
+                        //   getcomments route
+                       var pictureId = campusPic['pictureId'];
+                       var ajaxPictureData = { pictureId: pictureId };
+                        $.ajax({
+                            url: '@Url.RouteUrl("getcomments")',
+                            data: ajaxPictureData,
+                            dataType: 'json',
+                            type: "POST",
+                            async: false,
+                            success: function (response) {
+                                comments = response;
+                            }
+                        });
+                        contentString += '<table class="infoWindow_table" id="table' + pictureId + '">';;
+                        for (var c = 0; c < comments.length; ++c) {
+                            comment = comments[c];
+
+                            //Get the user that added the current comment from HomeController.getUser
+                            //  via getuser route
+                            var userId = comment['userId'];
+                            var ajaxUserData = { userId: userId };
+                            $.ajax({
+                                url: '@Url.RouteUrl("getuser")',
+                                data: ajaxUserData,
+                                dataType: 'json',
+                                type: "POST",
+                                async: false,
+                                success: function (response) {
+                                    users = response;
+                                }
+                            });
+                           
+                            user = users[0];
+                            contentString += '<tr id="' + comment['commentId'] + '"><td class="infoWindow_user">' + user['userName'] + ": " + '</td>' +
+                                             '<td class="infoWindow_comment">' + '<div>' + comment['commentText'] + '</div> </td>';
+                            if (comment['userId'] == getId())
+                            {
+                               contentString += '<td><button type="button" onclick="deleteComment(' + comment['commentId'] + ')">Remove</button></td>';
+                            }
+                            
+                            contentString += '</tr>'
+                                           
+                        }
+                        
+                        contentString += '</table><input type="text" id="' + pictureId + '"><button type="button" onclick="addComment(' + getId() + ', ' + pictureId + ')">Post Comment!</button>';
+                        contentString += '</div>';
+                        var test;
+                    }
+                    infowindow.setContent(contentString);
+                    return function () {
+                        infowindow.open(map, campusMarker);
+                    };
+                } (infowindow, campusMarker)
+    );
+
+            }
+
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+</script>
+

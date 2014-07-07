@@ -21,6 +21,32 @@
                     <a href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
                 }
             </text>
+            
+             <script>
+
+                 function getId() {
+                     var regExp = new RegExp("userId" + "=([^;]+)");
+                     var value = regExp.exec(document.cookie);
+                     return (value != null) ? unescape(value[1]) : null;
+                 }
+
+                 var cookieCheck = getId();
+
+                 if (cookieCheck == null) {
+                     $.ajax({
+                         url: '@Url.RouteUrl("getUserId")',
+                         dataType: 'json',
+                         async: false,
+                         success: function (response) {
+                             userId = response[0]['userId'];
+                             document.cookie = 'userId=' + userId + '';
+                         }
+
+                     });
+                 }
+
+           
+    </script>
         }
 
 
