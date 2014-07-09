@@ -206,7 +206,11 @@
         uploadText: "Upload");
             }
             <br />
-         <p>Caption:</p>@Html.TextBox("caption", "", new { placeholder = "Please enter a caption!", @maxlength = "150", @autocomplete = "off" })</center>
+         <p>Caption:</p>@Html.TextBox("caption", "", new { placeholder = "Please enter a caption!", @maxlength = "150", @autocomplete = "off" })
+            <br />
+                <input type="button" id="Button2" onclick="window.location.href='@Url.Action("ViewMap","home")'"
+                       value="View Map" />
+            </center>
 
         </div>
     </form>
