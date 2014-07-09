@@ -2,7 +2,7 @@
     ViewBag.Title = "Search";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<center>
 <input type="radio" checked ="checked"  id="photo" name="search" onclick="enable_photo()"/>Photo by User<input type="text" id="photoText" /><br />
 <input type="radio" id="comment" name="search" onclick="enable_comment()" />Comment by User<input disabled type="text" id="commentText" /><br />
 <input type="radio" id="radius" name="search" onclick="show_map()"/>Radius Latitude: <input disabled type="text" id="latText" /> Longitude <input disabled type="text" id="longText" /> Range: <input disabled type="text" id="range" /> Meters
@@ -19,6 +19,7 @@
 
 
 <script type="text/javascript">
+
     //Determine what kind of search is requested
     function evaluate_search()
     {
@@ -60,6 +61,11 @@
                 icon: image
             });
             var infowindow = new google.maps.InfoWindow({});
+
+            google.maps.event.addListener(infowindow, 'closeclick', function () {
+                evaluate_search();
+            });
+
             google.maps.event.addListener(searchMarker, 'click',
 
                //Get all of the pictures at the current location 
@@ -447,3 +453,4 @@
     }
 
 </script>
+</center>

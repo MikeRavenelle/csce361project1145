@@ -523,13 +523,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/08/2014 19:46:12</publishTime>
     </File>
     <File Include="Views/Home/Search.cshtml">
-      <publishTime>07/08/2014 21:05:46</publishTime>
+      <publishTime>07/08/2014 21:34:33</publishTime>
     </File>
     <File Include="Views/Home/Upload.cshtml">
       <publishTime>07/08/2014 20:05:15</publishTime>
     </File>
     <File Include="Views/Home/ViewMap.cshtml">
-      <publishTime>07/08/2014 21:05:53</publishTime>
+      <publishTime>07/08/2014 21:29:00</publishTime>
     </File>
     <File Include="Views/Shared/Error.cshtml">
       <publishTime>07/08/2014 19:46:07</publishTime>
