@@ -91,7 +91,7 @@
 
                             user = users[0];
 
-                            contentString += '<div id="div' + picture['pictureId'] + '">' + user['userName'];
+                            contentString += '<div class="window-text" id="div' + picture['pictureId'] + '">' + user['userName'];
                             if (picture['userId'] == getId()) {
                                 contentString += '<button type="button" class="delete" onclick="deletePicture(' + picture['pictureId'] + ', ' + picture['locationId'] + ')">Remove Image</button>';
                             }
@@ -151,7 +151,8 @@
                     return function () {
                         infowindow.open(map, searchMarker);
                     };
-                }(infowindow, searchMarker) );
+                }(infowindow, searchMarker));
+
         }
     }
 

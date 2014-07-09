@@ -108,7 +108,7 @@
 
                         user = users[0];
 
-                        contentString += '<div id="div' + campusPic['pictureId'] + '">' + user['userName'];
+                        contentString += '<div class="window-text" id="div' + campusPic['pictureId'] + '">' + user['userName'];
                         if (campusPic['userId'] == getId() ) {
                             contentString += '<button type="button" class="delete" onclick="deletePicture(' + campusPic['pictureId'] + ', ' + campusPic['locationId'] + ')">Remove Image</button>';
                         }
@@ -164,6 +164,7 @@
                         contentString += '</div>';
                         var test;
                     }
+
                     infowindow.setContent(contentString);
                     return function () {
                         infowindow.open(map, campusMarker);
